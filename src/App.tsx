@@ -110,6 +110,7 @@ const MainContent: React.FC = () => {
           setItemToEdit(null);
         }}
         itemToEdit={itemToEdit}
+        onOpenCycleModal={() => setIsCycleModalOpen(true)}
       />
 
       <CycleManagerModal

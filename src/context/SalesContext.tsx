@@ -23,6 +23,7 @@ interface SalesContextType {
   setCurrentRole: (role: CurrentUserRole) => void;
   setSelectedCycleId: (cycleId: string) => void;
   addCycle: (cycle: Omit<ReportingCycle, 'id'>) => void;
+  setActiveCycle: (cycleId: string) => void;
   addRep: (rep: Omit<SalesRep, 'id'>) => void;
   loginAsMD: (pin: string) => boolean;
   loginAsRep: (repId: string, pin: string, lockDevice: boolean) => boolean;
@@ -715,12 +716,38 @@ export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const addCycle = (cycleData: Omit<ReportingCycle, 'id'>) => {
-    const id = `cycle-${Date.now()}`;
+    const id = cycleData.month && cycleData.cycleNumber 
+      ? `${cycleData.month}-C${cycleData.cycleNumber}` 
+      : `cycle-${Date.now()}`;
+    
+    const exists = cycles.some((c) => c.id === id);
+    const finalId = exists ? `cycle-${Date.now()}` : id;
+
     const newCycle: ReportingCycle = {
       ...cycleData,
-      id,
+      id: finalId,
     };
-    setCycles((prev) => [...prev, newCycle]);
+
+    setCycles((prev) => {
+      if (newCycle.isCurrent) {
+        return [...prev.map((c) => ({ ...c, isCurrent: false })), newCycle];
+      }
+      return [...prev, newCycle];
+    });
+
+    if (newCycle.isCurrent) {
+      setSelectedCycleIdState(finalId);
+    }
+  };
+
+  const setActiveCycle = (cycleId: string) => {
+    setCycles((prev) =>
+      prev.map((c) => ({
+        ...c,
+        isCurrent: c.id === cycleId,
+      }))
+    );
+    setSelectedCycleIdState(cycleId);
   };
 
   const addRep = (repData: Omit<SalesRep, 'id'>) => {
@@ -798,6 +825,7 @@ export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setCurrentRole,
         setSelectedCycleId,
         addCycle,
+        setActiveCycle,
         addRep,
         loginAsMD,
         loginAsRep,

@@ -310,7 +310,7 @@ export const MDDashboard: React.FC<MDDashboardProps> = ({
                 className="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl text-xs font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer shrink-0"
               >
                 <Plus className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="hidden sm:inline">+ 10-Day Timing</span>
+                <span className="hidden sm:inline">10-Day Timing</span>
               </button>
             )}
           </div>

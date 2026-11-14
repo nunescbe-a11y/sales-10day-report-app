@@ -1,8 +1,35 @@
 {
   "version": "1.0",
-  "lastUpdated": "2026-11-12T03:42:41.649Z",
+  "lastUpdated": "2026-11-14T10:34:08.599Z",
   "system": "Nunes 10-Day Sales Reporting Suite",
   "sales": [
+    {
+      "inqDate": "2026-11-10",
+      "recPayDate": "2026-11-13",
+      "region": "India",
+      "item": "Freeman IR Thermometer",
+      "comName": "Sree Nidhi Enterprises",
+      "purCost": 2438,
+      "lanCost": 0,
+      "sellCost": 4280,
+      "advanPay": 5286,
+      "balance": 0,
+      "packingCharges": 100,
+      "forwardingCharges": 100,
+      "gst": 18,
+      "overallAmount": 5286,
+      "grossProfit": 1842,
+      "purchaserName": "yazhini",
+      "itemStatus": "Order placed with factory",
+      "statusCategory": "Order Placed",
+      "cycleId": "2026-11-C1",
+      "isDraft": false,
+      "notes": "Completed from in-progress draft",
+      "id": "sale-1794570445264-83tka",
+      "slNo": 7,
+      "updatedAt": "2026-11-13T12:03:57.129Z",
+      "gstAmount": 860
+    },
     {
       "id": "sale-oct-1",
       "slNo": 1,
@@ -14,19 +41,20 @@
       "purCost": 32000,
       "lanCost": 0,
       "sellCost": 100000,
-      "advanPay": 0,
-      "balance": 118000,
+      "advanPay": 118000,
+      "balance": 0,
       "packingCharges": 0,
       "forwardingCharges": 0,
       "gst": 18,
       "overallAmount": 118000,
       "grossProfit": 68000,
       "purchaserName": "yazhini",
-      "itemStatus": "item dispatched by supplier",
-      "statusCategory": "Dispatched",
-      "cycleId": "2026-10-C2",
+      "itemStatus": "dispatched by 30/10/26",
+      "statusCategory": "Pending Dispatch",
+      "cycleId": "2026-11-C1",
       "isDraft": false,
-      "updatedAt": "2026-10-23T10:00:00.000Z"
+      "updatedAt": "2026-11-13T11:47:36.704Z",
+      "notes": "Completed from in-progress draft"
     },
     {
       "id": "sale-oct-2",
@@ -127,6 +155,32 @@
       "cycleId": "2026-10-C3",
       "isDraft": false,
       "updatedAt": "2026-10-29T10:00:00.000Z"
+    },
+    {
+      "inqDate": "2026-09-19",
+      "recPayDate": "2026-11-12",
+      "region": "India",
+      "item": "HTC HYGROMETER",
+      "comName": "MEDOPHARM",
+      "purCost": 0,
+      "lanCost": 0,
+      "sellCost": 14500,
+      "advanPay": 17110,
+      "balance": 0,
+      "packingCharges": 0,
+      "forwardingCharges": 0,
+      "gst": 18,
+      "overallAmount": 17110,
+      "grossProfit": 14500,
+      "purchaserName": "yazhini",
+      "itemStatus": "READY STOCK",
+      "statusCategory": "Dispatched",
+      "cycleId": "2026-11-C1",
+      "isDraft": false,
+      "notes": "Completed from in-progress draft",
+      "id": "sale-1794458961802-bpihj",
+      "slNo": 6,
+      "updatedAt": "2026-11-12T04:50:14.459Z"
     }
   ],
   "cycles": [
@@ -136,7 +190,8 @@
       "month": "2026-10",
       "cycleNumber": 1,
       "startDate": "2026-10-01",
-      "endDate": "2026-10-10"
+      "endDate": "2026-10-10",
+      "isCurrent": false
     },
     {
       "id": "2026-10-C2",
@@ -144,7 +199,8 @@
       "month": "2026-10",
       "cycleNumber": 2,
       "startDate": "2026-10-11",
-      "endDate": "2026-10-20"
+      "endDate": "2026-10-20",
+      "isCurrent": false
     },
     {
       "id": "2026-10-C3",
@@ -152,16 +208,71 @@
       "month": "2026-10",
       "cycleNumber": 3,
       "startDate": "2026-10-21",
-      "endDate": "2026-10-31"
+      "endDate": "2026-10-31",
+      "isCurrent": false
     },
     {
       "id": "2026-11-C1",
-      "name": "Nov 01 - Nov 10, 2026 (Cycle 1 - Active)",
+      "name": "Nov 01 - Nov 10, 2026 (Cycle 1)",
       "month": "2026-11",
       "cycleNumber": 1,
       "startDate": "2026-11-01",
       "endDate": "2026-11-10",
-      "isCurrent": true
+      "isCurrent": false
+    },
+    {
+      "id": "2026-11-C2",
+      "name": "Nov 11 - Nov 20, 2026 (Cycle 2 - Active)",
+      "month": "2026-11",
+      "cycleNumber": 2,
+      "startDate": "2026-11-11",
+      "endDate": "2026-11-20",
+      "isCurrent": false
+    },
+    {
+      "id": "2026-11-C3",
+      "name": "Nov 21 - Nov 30, 2026 (Cycle 3)",
+      "month": "2026-11",
+      "cycleNumber": 3,
+      "startDate": "2026-11-21",
+      "endDate": "2026-11-30",
+      "isCurrent": false
+    },
+    {
+      "id": "2026-12-C1",
+      "name": "Dec 01 - Dec 10, 2026 (Cycle 1)",
+      "month": "2026-12",
+      "cycleNumber": 1,
+      "startDate": "2026-12-01",
+      "endDate": "2026-12-10",
+      "isCurrent": false
+    },
+    {
+      "id": "2026-12-C2",
+      "name": "Dec 11 - Dec 20, 2026 (Cycle 2)",
+      "month": "2026-12",
+      "cycleNumber": 2,
+      "startDate": "2026-12-11",
+      "endDate": "2026-12-20",
+      "isCurrent": false
+    },
+    {
+      "id": "2026-12-C3",
+      "name": "Dec 21 - Dec 31, 2026 (Cycle 3)",
+      "month": "2026-12",
+      "cycleNumber": 3,
+      "startDate": "2026-12-21",
+      "endDate": "2026-12-31",
+      "isCurrent": false
+    },
+    {
+      "name": "Jan 01 - Jan 10, 2027 (Cycle 1)",
+      "month": "2027-01",
+      "cycleNumber": 1,
+      "startDate": "2027-01-01",
+      "endDate": "2027-01-10",
+      "isCurrent": true,
+      "id": "2027-01-C1"
     }
   ],
   "reps": [
@@ -170,7 +281,7 @@
       "username": "yazhini",
       "password": "yazhini123",
       "name": "yazhini",
-      "displayName": "Yazhini S.",
+      "displayName": "Yazhini P",
       "email": "yazhini@company.com",
       "pin": "1234",
       "avatarColor": "bg-indigo-600",
@@ -194,7 +305,7 @@
       "username": "janani",
       "password": "janani123",
       "name": "janani",
-      "displayName": "Janani M.",
+      "displayName": "Janani U",
       "email": "janani@company.com",
       "pin": "1234",
       "avatarColor": "bg-purple-600",
@@ -243,6 +354,12 @@
       "text": "Order placed with factory",
       "label": "Order placed with factory",
       "category": "Order Placed"
+    },
+    {
+      "id": "status-1794459012367-cx2a",
+      "text": "READY STOCK",
+      "label": "READY STOCK",
+      "category": "Dispatched"
     }
   ]
 }

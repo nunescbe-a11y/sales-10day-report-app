@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calculator, Check, Building2, Tag, Calendar, UserCheck, Save, Edit3 } from 'lucide-react';
+import { X, Calculator, Check, Building2, Tag, Calendar, UserCheck, Save, Edit3, Plus } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import type { SaleItem, RegionType, StatusCategory } from '../types';
 import { useSales } from '../context/SalesContext';
@@ -11,12 +11,14 @@ interface AddEditSaleModalProps {
   isOpen: boolean;
   onClose: () => void;
   itemToEdit?: SaleItem | null;
+  onOpenCycleModal?: () => void;
 }
 
 export const AddEditSaleModal: React.FC<AddEditSaleModalProps> = ({
   isOpen,
   onClose,
   itemToEdit,
+  onOpenCycleModal,
 }) => {
   const { addSaleItem, updateSaleItem, reps, cycles, currentRole, isMD } = useSales();
 
@@ -340,10 +342,23 @@ export const AddEditSaleModal: React.FC<AddEditSaleModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-1 flex items-center gap-1">
-                    <Calendar className="w-3 h-3 text-emerald-600" />
-                    10-Day Reporting Cycle <span className="text-rose-500">*</span>
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[11px] font-semibold text-slate-700 flex items-center gap-1">
+                      <Calendar className="w-3 h-3 text-emerald-600" />
+                      10-Day Reporting Cycle <span className="text-rose-500">*</span>
+                    </label>
+                    {onOpenCycleModal && (
+                      <button
+                        type="button"
+                        onClick={onOpenCycleModal}
+                        className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5 cursor-pointer"
+                        title="Add or Manage 10-Day Timing Periods"
+                      >
+                        <Plus className="w-3 h-3" />
+                        <span>+ 10-Day Timing</span>
+                      </button>
+                    )}
+                  </div>
                   <select
                     value={cycleId}
                     onChange={(e) => setCycleId(e.target.value)}
