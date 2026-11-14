@@ -1,0 +1,205 @@
+@import "tailwindcss";
+
+@layer base {
+  *, ::before, ::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #F8FAFC;
+    color: #0F172A;
+    font-family: 'Kanit', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100%;
+  }
+  #root {
+    min-height: 100vh;
+    background-color: #F8FAFC;
+    font-family: 'Kanit', sans-serif;
+  }
+}
+
+/* Gradient Hero Heading */
+.hero-heading {
+  background: linear-gradient(180deg, #646973 0%, #BBCCD7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Hero portrait verbatim styles */
+.hero-portrait-wrap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  width: 400px;
+  touch-action: pan-y;
+}
+@media (min-width: 640px) {
+  .hero-portrait-wrap {
+    width: 500px;
+  }
+}
+@media (min-width: 768px) {
+  .hero-portrait-wrap {
+    width: 600px;
+  }
+}
+@media (min-width: 1024px) {
+  .hero-portrait-wrap {
+    width: clamp(640px, 78vh, 46vw);
+  }
+}
+
+/* Auth split-view portrait styles */
+.auth-portrait-wrap {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  z-index: 10;
+  width: 100% !important;
+  max-width: 380px;
+  margin: 0 auto;
+  touch-action: pan-y;
+}
+@media (min-width: 640px) {
+  .auth-portrait-wrap {
+    max-width: 440px;
+  }
+}
+@media (min-width: 1024px) {
+  .auth-portrait-wrap {
+    max-width: 500px;
+  }
+}
+
+/* Stage portrait styles (Focused 100-action stage) */
+.stage-portrait-wrap {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  z-index: 10;
+  width: 100% !important;
+  max-width: clamp(280px, 48vh, 460px);
+  margin: 0 auto;
+  touch-action: pan-y;
+}
+
+.neon-magenta-gradient {
+  background: linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #BE4C00 100%);
+}
+
+.hero-portrait-inner {
+  transition: transform 0.6s ease-in-out;
+  will-change: transform;
+  position: relative;
+}
+.hero-portrait-inner img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+#faceGl {
+  position: absolute;
+  left: -35%;
+  top: -35%;
+  width: 170%;
+  height: 170%;
+  pointer-events: none;
+}
+#faceProps {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+#faceFly, #faceHand {
+  position: absolute;
+  opacity: 0;
+  transition: opacity .2s;
+  transform: translate(-50%, -50%);
+}
+#faceFly {
+  width: 6%;
+  fill: #111;
+}
+#faceFly .wing {
+  fill: rgba(220, 235, 255, .7);
+  transform-origin: 16px 15px;
+  animation: flap .05s linear infinite alternate;
+}
+#faceFly .wing.r {
+  animation-direction: alternate-reverse;
+}
+@keyframes flap {
+  from { transform: rotate(-16deg); }
+  to { transform: rotate(16deg); }
+}
+#faceHand {
+  width: 11%;
+  fill: #fff;
+  stroke: #0c0c0c;
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+#faceHand .grab {
+  display: none;
+}
+#faceHand.shut .open {
+  display: none;
+}
+#faceHand.shut .grab {
+  display: block;
+}
+
+/* Clean Light Theme Subtle Scrollbar */
+* {
+  scrollbar-width: thin !important;
+  scrollbar-color: #cbd5e1 #f8fafc !important;
+}
+
+::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+}
+::-webkit-scrollbar-track {
+  background: #f8fafc !important;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1 !important;
+  border-radius: 9999px !important;
+  border: 2px solid #f8fafc !important;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8 !important;
+}
+::-webkit-scrollbar-corner {
+  background: #f8fafc !important;
+}
+
+.custom-black-scrollbar {
+  scrollbar-width: thin !important;
+  scrollbar-color: #cbd5e1 #f8fafc !important;
+}
+.custom-black-scrollbar::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+}
+.custom-black-scrollbar::-webkit-scrollbar-track {
+  background: #f8fafc !important;
+}
+.custom-black-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1 !important;
+  border-radius: 9999px !important;
+  border: 2px solid #f8fafc !important;
+}
