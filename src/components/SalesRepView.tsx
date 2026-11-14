@@ -8,7 +8,7 @@ import {
   CheckCircle2,
   Calendar,
   Sparkles,
-  Calculator,
+
   FileSpreadsheet,
   Check,
   Tag,
@@ -556,46 +556,7 @@ export const SalesRepView: React.FC<SalesRepViewProps> = ({
             : 'bg-white border-slate-200/90 text-slate-900 shadow-xs'
         }`}>
           <div className="w-full space-y-3.5">
-            {/* Compact Header Row */}
-            <div className={`flex items-center justify-between border-b pb-2.5 ${isDark ? 'border-white/10' : 'border-slate-100'}`}>
-              <div className="flex items-center gap-2.5">
-                <div className={`p-2 rounded-xl border ${
-                  isDark 
-                    ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/50 shadow-xs' 
-                    : 'bg-emerald-50 text-emerald-600 border-emerald-100 shadow-2xs'
-                }`}>
-                  <Calculator className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className={`text-base font-black leading-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                    Staff 10-Day Payment & Sales Filling
-                  </h3>
-                  <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                    Fill transaction details or click <strong className={isDark ? 'text-amber-400' : 'text-amber-700'}>"Save as Draft"</strong> to finish later!
-                  </p>
-                </div>
-              </div>
-              <div className={`text-xs sm:text-sm font-bold px-3 py-1 rounded-full border flex items-center gap-2 ${
-                isDark 
-                  ? 'bg-indigo-950/60 text-indigo-300 border-indigo-800/60' 
-                  : 'bg-blue-50 text-blue-700 border-blue-200'
-              }`}>
-                <div className="w-5 h-5 rounded-full overflow-hidden border border-indigo-400 shrink-0 bg-slate-800">
-                  {activeRep?.avatarUrl || getStaffAvatarUrl(activeRep?.name || currentRole, reps) ? (
-                    <img
-                      src={activeRep?.avatarUrl || getStaffAvatarUrl(activeRep?.name || currentRole, reps)}
-                      alt={activeRep?.displayName || currentRole}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-indigo-600 text-white text-[9px] font-bold flex items-center justify-center">
-                      {(activeRep?.displayName || currentRole).charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                </div>
-                <span>Staff: {activeRep?.displayName || currentRole}</span>
-              </div>
-            </div>
+            
 
             {/* Editing In-Progress Draft Banner */}
             {editingItemId && (
