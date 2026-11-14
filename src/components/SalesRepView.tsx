@@ -411,21 +411,9 @@ export const SalesRepView: React.FC<SalesRepViewProps> = ({
             />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h2 className={`text-sm sm:text-base md:text-lg font-black leading-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                {activeRep?.displayName || currentRole} • Staff Sales Workspace
-              </h2>
-              <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border flex items-center gap-1 ${
-                isDark 
-                  ? 'bg-emerald-950/50 text-emerald-300 border-emerald-800/60' 
-                  : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-              }`}>
-                <Check className="w-3 h-3 text-emerald-600" /> Active Profile
-              </span>
-            </div>
-            <p className={`text-xs mt-0.5 font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-              10-Day Reporting: Fill transaction items & review milestone targets
-            </p>
+            <h2 className={`text-sm sm:text-base md:text-lg font-black leading-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              {activeRep?.displayName || currentRole}
+            </h2>
           </div>
         </div>
 
