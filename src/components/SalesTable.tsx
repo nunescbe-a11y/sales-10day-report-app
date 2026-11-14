@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Search, 
-  Download, 
+
   Edit3, 
   Trash2, 
   Copy, 
@@ -111,64 +111,6 @@ export const SalesTable: React.FC<SalesTableProps> = ({
     });
   };
 
-  const exportToCSV = () => {
-    const headers = [
-      'SL NO',
-      'INQ DATE',
-      'REC PAY DATE',
-      'India or Export',
-      'ITEM',
-      'COM NAME',
-      'PUR COS',
-      'LAN COST',
-      'SELL COST',
-      'Advan Pay',
-      'Balance',
-      'Pcking charges',
-      'Forwading charges',
-      'GST',
-      'OVER ALL AMOU',
-      'Purchaser Name',
-      'ITEM STATUS',
-      'Cycle ID',
-      'Notes',
-    ];
-
-    const rows = filteredRecords.map((s) => [
-      s.slNo,
-      s.inqDate,
-      s.recPayDate,
-      s.region,
-      `"${s.item.replace(/"/g, '""')}"`,
-      `"${s.comName.replace(/"/g, '""')}"`,
-      s.purCost || '',
-      s.lanCost || '',
-      s.sellCost || '',
-      s.advanPay || '',
-      s.balance || '',
-      s.packingCharges || '',
-      s.forwardingCharges || '',
-      `${s.gst}%`,
-      s.overallAmount || '',
-      s.purchaserName,
-      `"${s.itemStatus.replace(/"/g, '""')}"`,
-      s.cycleId,
-      `"${(s.notes || '').replace(/"/g, '""')}"`,
-    ]);
-
-    const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `10_Days_Sales_Report_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   return (
     <div className={`h-full flex-1 border rounded-2xl shadow-xl overflow-hidden flex flex-col min-h-0 transition-colors duration-200 ${
       isDark 
@@ -255,18 +197,7 @@ export const SalesTable: React.FC<SalesTableProps> = ({
             <option value="Order Placed">Order Placed</option>
           </select>
 
-          <button
-            onClick={exportToCSV}
-            title="Download Excel CSV"
-            className={`px-2.5 py-1 border rounded-lg text-xs font-bold flex items-center gap-1 shadow-xs transition cursor-pointer ${
-              isDark 
-                ? 'bg-zinc-850 hover:bg-zinc-750 text-slate-200 border-zinc-700' 
-                : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-300'
-            }`}
-          >
-            <Download className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Excel</span>
-          </button>
+          
 
           <button
             onClick={onAddNew}
