@@ -133,7 +133,7 @@ const MainContent: React.FC = () => {
       <footer className="border-t border-slate-200 bg-white py-1 px-4 sm:px-6 text-center text-[10px] text-slate-500 shrink-0">
         <div className="w-full flex items-center justify-between gap-2">
           <p className="font-semibold text-slate-600">
-            10-Day Sales Reporting Suite • Cloudflare Zero Trust
+            10-Day Sales Reporting Suite
           </p>
           <div className="flex items-center gap-3 text-slate-400">
             <span>18% Standard GST</span>

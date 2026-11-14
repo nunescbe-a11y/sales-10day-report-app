@@ -5,7 +5,6 @@ import {
   UserPlus, 
   FileSpreadsheet,
   Plus,
-  ShieldCheck,
   HardDriveDownload,
   HardDriveUpload,
   UserCheck,
@@ -34,7 +33,6 @@ export const Header: React.FC<HeaderProps> = ({
     session,
     exportBackupJSON,
     restoreBackupJSON,
-    syncStatus,
     logout,
   } = useSales();
 
@@ -54,34 +52,7 @@ export const Header: React.FC<HeaderProps> = ({
               <h1 className="text-sm font-bold tracking-tight leading-none text-slate-900">
                 Nunes 10-Day Sales Report Hub
               </h1>
-              {/* Cloudflare Access Badge */}
-              <span className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold border bg-amber-50 text-amber-800 border-amber-200">
-                <ShieldCheck className="w-3 h-3 text-orange-400" />
-                Cloudflare
-              </span>
 
-              {/* Permanent Disk Storage Active Badge */}
-              <span
-                className="hidden md:inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-semibold border bg-emerald-50 text-emerald-800 border-emerald-200"
-                title="Permanent Hard Disk Storage is active. All records auto-save to disk and are never erased on updates."
-              >
-                <span
-                  className={`w-1.5 h-1.5 rounded-full ${
-                    syncStatus === 'saving'
-                      ? 'bg-amber-400 animate-spin'
-                      : syncStatus === 'offline'
-                      ? 'bg-rose-500'
-                      : 'bg-emerald-400 animate-pulse'
-                  }`}
-                />
-                <span>
-                  {syncStatus === 'saving'
-                    ? 'Saving to Disk...'
-                    : syncStatus === 'offline'
-                    ? 'Offline Mode (Local Backup)'
-                    : 'Disk Synced & Permanent'}
-                </span>
-              </span>
             </div>
             <p className="text-[10px] mt-0.5 text-slate-500">
               {isMD ? (session.repName === 'Vengateshan TL' ? 'Team Lead • Executive All-Company Oversight' : 'Executive All-Company Oversight') : `Staff View: ${session.repName || currentRole}`}
