@@ -1,3 +1,5 @@
+import { InstallAppBanner } from './components/InstallAppBanner';
+import { MobileBottomNav } from './components/MobileBottomNav';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SalesProvider, useSales } from './context/SalesContext';
@@ -129,6 +131,12 @@ const MainContent: React.FC = () => {
         defaultUsername={resetTargetUser}
       />
 
+      
+      {/* Mobile-Friendly Thumb Navigation for Phones */}
+      <MobileBottomNav
+        onOpenUploadModal={handleAddNewItem}
+        onOpenCycleModal={() => setIsCycleModalOpen(true)}
+      />
       {/* Ultra-Compact Footer */}
       <footer className="border-t border-slate-200 bg-white py-1 px-4 sm:px-6 text-center text-[10px] text-slate-500 shrink-0">
         <div className="w-full flex items-center justify-between gap-2">
@@ -152,6 +160,7 @@ export default function App() {
   return (
     <SalesProvider>
       <MainContent />
+      <InstallAppBanner />
     </SalesProvider>
   );
 }

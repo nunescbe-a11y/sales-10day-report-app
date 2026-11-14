@@ -8,7 +8,8 @@ import {
   HardDriveDownload,
   HardDriveUpload,
   UserCheck,
-  LogOut
+  LogOut,
+  Smartphone
 } from 'lucide-react';
 import { useSales } from '../context/SalesContext';
 import { StaffLoginModal } from './StaffLoginModal';
@@ -219,6 +220,17 @@ export const Header: React.FC<HeaderProps> = ({
               />
             </label>
           )}
+
+                    {/* Phone App Install Button */}
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('trigger-install-prompt'))}
+            title="Install Nunes Sales App on Phone"
+            className="px-2.5 py-1.5 rounded-xl border border-indigo-200 bg-indigo-50/70 hover:bg-indigo-100 text-indigo-700 transition cursor-pointer flex items-center gap-1.5 shadow-2xs"
+          >
+            <Smartphone className="w-3.5 h-3.5 text-indigo-600" />
+            <span className="text-xs font-bold hidden sm:inline">Phone App</span>
+          </button>
 
           {/* Logout Button */}
           <button
