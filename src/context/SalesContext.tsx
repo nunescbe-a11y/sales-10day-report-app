@@ -111,7 +111,8 @@ const attachAvatars = (repList: SalesRep[]): SalesRep[] => {
       else if (nameKey === 'yazhini' || displayName === 'Yazhini S.') displayName = 'Yazhini P';
       else if (nameKey === 'janani' || displayName === 'Janani M.') displayName = 'Janani U';
 
-      const isCustomBase64 = r.avatarUrl && r.avatarUrl.startsWith('data:image') && !r.avatarUrl.includes('/avatars/');
+      const isSvgPlaceholder = r.avatarUrl && r.avatarUrl.includes('data:image/svg+xml');
+      const isCustomBase64 = r.avatarUrl && r.avatarUrl.startsWith('data:image') && !r.avatarUrl.includes('/avatars/') && !isSvgPlaceholder;
       return {
         ...r,
         displayName,
