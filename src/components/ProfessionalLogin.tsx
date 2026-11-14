@@ -162,7 +162,7 @@ export const ProfessionalLogin: React.FC = () => {
 
               {/* Horizontal Apple Desktop Circular Portraits Row */}
               <div className="flex flex-wrap items-start justify-center gap-6 sm:gap-8">
-                {reps.map((rep) => {
+                {reps.filter(r => r.id !== 'naveena' && r.name !== 'naveena' && r.id !== 'ready stock' && r.name !== 'ready stock' && r.id !== 'pranesh').map((rep) => {
                   const avatarUrl =
                     getStaffAvatarUrl(rep.name, reps) || rep.avatarUrl;
                   return (
@@ -193,8 +193,8 @@ export const ProfessionalLogin: React.FC = () => {
                         <span className="block text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition">
                           {rep.displayName}
                         </span>
-                        <span className="block text-[11px] text-slate-500 font-medium">
-                          Sales Rep
+                        <span className="block text-[11px] font-semibold text-slate-500">
+                          {rep.id === 'vengateshan' ? '⭐ Team Lead (Full Access)' : 'Sales Rep'}
                         </span>
                       </div>
                     </button>

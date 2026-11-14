@@ -1,6 +1,6 @@
-import { DEFAULT_AVATARS, AVATAR_YAZHINI, AVATAR_NAVEENA, AVATAR_JANANI } from './staffAvatarsData';
+import { DEFAULT_AVATARS, AVATAR_YAZHINI, AVATAR_NAVEENA, AVATAR_JANANI, AVATAR_VENGATESHAN } from './staffAvatarsData';
 
-export { DEFAULT_AVATARS, AVATAR_YAZHINI, AVATAR_NAVEENA, AVATAR_JANANI };
+export { DEFAULT_AVATARS, AVATAR_YAZHINI, AVATAR_NAVEENA, AVATAR_JANANI, AVATAR_VENGATESHAN };
 
 /**
  * Returns the profile photo for any staff member by matching their name, ID, or username.
@@ -15,6 +15,7 @@ export function getStaffAvatarUrl(
   const clean = nameOrId.toLowerCase().trim();
 
   // 1. Direct match to 100% reliable embedded Base64 portraits
+  if (clean.includes('vengateshan') || clean.includes('vengatesh')) return AVATAR_VENGATESHAN;
   if (clean.includes('yazhini')) return AVATAR_YAZHINI;
   if (clean.includes('naveena')) return AVATAR_NAVEENA;
   if (clean.includes('janani')) return AVATAR_JANANI;

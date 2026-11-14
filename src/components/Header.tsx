@@ -84,7 +84,7 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
             </div>
             <p className="text-[10px] mt-0.5 text-slate-500">
-              {isMD ? 'Executive All-Company Oversight' : `Staff View: ${session.repName || currentRole}`}
+              {isMD ? (session.repName === 'Vengateshan TL' ? 'Team Lead • Executive All-Company Oversight' : 'Executive All-Company Oversight') : `Staff View: ${session.repName || currentRole}`}
             </p>
           </div>
         </div>
@@ -121,7 +121,7 @@ export const Header: React.FC<HeaderProps> = ({
                   {activeRep ? activeRep.displayName : 'MD Executive'}
                 </span>
                 <span className="block text-[10px] text-indigo-600 font-bold uppercase tracking-wider">
-                  MD Oversight • Switch View
+                  {session.repName === 'Vengateshan TL' ? 'TL Oversight • Switch View' : 'MD Oversight • Switch View'}
                 </span>
               </div>
               <UserCheck className="w-4 h-4 text-indigo-600 hidden md:block" />
@@ -177,7 +177,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onChange={(e) => setCurrentRole(e.target.value)}
                 className="border border-slate-300 rounded-lg px-2.5 py-1 text-xs sm:text-sm font-bold bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer shadow-xs"
               >
-                <option value="MD">👑 MD All-Company Dashboard</option>
+                <option value="MD">{session.repName === 'Vengateshan TL' ? '⭐ TL All-Company Dashboard' : '👑 MD All-Company Dashboard'}</option>
                 <optgroup label="Staff Sales Workspace">
                   {reps.map((r) => (
                     <option key={r.id} value={r.name}>

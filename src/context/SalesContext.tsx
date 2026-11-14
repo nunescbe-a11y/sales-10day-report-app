@@ -1,4 +1,4 @@
-import { DEFAULT_AVATARS, AVATAR_YAZHINI, AVATAR_NAVEENA, AVATAR_JANANI } from '../utils/staffAvatarsData';
+import { DEFAULT_AVATARS, AVATAR_YAZHINI, AVATAR_JANANI, AVATAR_VENGATESHAN } from '../utils/staffAvatarsData';
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import type { SaleItem, ReportingCycle, SalesRep, CurrentUserRole, UserSession, CelebrationState, StatusCategory, StatusOption } from '../types';
 import { INITIAL_SALES, INITIAL_CYCLES, INITIAL_REPS, INITIAL_STATUS_OPTIONS } from '../data/initialData';
@@ -76,27 +76,47 @@ const DEFAULT_SESSION: UserSession = {
 };
 
 const attachAvatars = (repList: SalesRep[]): SalesRep[] => {
-  return repList.map((r) => {
-    const idKey = r.id?.toLowerCase() || '';
-    const nameKey = r.name?.toLowerCase() || '';
-    let embedded = DEFAULT_AVATARS[idKey] || DEFAULT_AVATARS[nameKey];
-    if (!embedded) {
-      if (idKey.includes('yazhini') || nameKey.includes('yazhini')) embedded = AVATAR_YAZHINI;
-      else if (idKey.includes('naveena') || nameKey.includes('naveena')) embedded = AVATAR_NAVEENA;
-      else if (idKey.includes('janani') || nameKey.includes('janani')) embedded = AVATAR_JANANI;
-    }
+  return repList
+    .filter((r) => {
+      const idKey = (r.id || '').toLowerCase();
+      const nameKey = (r.name || '').toLowerCase();
+      return (
+        idKey !== 'naveena' &&
+        nameKey !== 'naveena' &&
+        idKey !== 'ready stock' &&
+        nameKey !== 'ready stock' &&
+        idKey !== 'stock' &&
+        nameKey !== 'stock' &&
+        idKey !== 'pranesh' &&
+        nameKey !== 'pranesh'
+      );
+    })
+    .map((r) => {
+      const idKey = r.id?.toLowerCase() || '';
+      const nameKey = r.name?.toLowerCase() || '';
+      let embedded = DEFAULT_AVATARS[idKey] || DEFAULT_AVATARS[nameKey];
+      if (!embedded) {
+        if (idKey.includes('vengateshan') || nameKey.includes('vengateshan') || idKey.includes('vengatesh') || nameKey.includes('vengatesh') || idKey === 'tl') {
+          embedded = AVATAR_VENGATESHAN;
+        } else if (idKey.includes('yazhini') || nameKey.includes('yazhini')) {
+          embedded = AVATAR_YAZHINI;
+        } else if (idKey.includes('janani') || nameKey.includes('janani')) {
+          embedded = AVATAR_JANANI;
+        }
+      }
 
-    let displayName = r.displayName;
-    if (nameKey === 'yazhini' || displayName === 'Yazhini S.') displayName = 'Yazhini P';
-    else if (nameKey === 'janani' || displayName === 'Janani M.') displayName = 'Janani U';
+      let displayName = r.displayName;
+      if (idKey.includes('vengateshan') || nameKey.includes('vengateshan') || idKey === 'tl') displayName = 'Vengateshan TL';
+      else if (nameKey === 'yazhini' || displayName === 'Yazhini S.') displayName = 'Yazhini P';
+      else if (nameKey === 'janani' || displayName === 'Janani M.') displayName = 'Janani U';
 
-    const isCustomBase64 = r.avatarUrl && r.avatarUrl.startsWith('data:image') && !r.avatarUrl.includes('/avatars/');
-    return {
-      ...r,
-      displayName,
-      avatarUrl: isCustomBase64 ? r.avatarUrl : (embedded || r.avatarUrl),
-    };
-  });
+      const isCustomBase64 = r.avatarUrl && r.avatarUrl.startsWith('data:image') && !r.avatarUrl.includes('/avatars/');
+      return {
+        ...r,
+        displayName,
+        avatarUrl: isCustomBase64 ? r.avatarUrl : (embedded || r.avatarUrl || AVATAR_VENGATESHAN),
+      };
+    });
 };
 
 export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -518,6 +538,32 @@ export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const cleanUser = rawUser.includes('@') ? rawUser.split('@')[0] : rawUser;
     const cleanPass = passwordInput.trim();
 
+    // 1. Team Lead Vengateshan TL: Full Access like MD View
+    if (
+      cleanUser === 'vengateshan' ||
+      cleanUser === 'vengatesh' ||
+      cleanUser === 'tl' ||
+      rawUser === 'vengateshan@company.com' ||
+      rawUser === 'vengatesh@company.com' ||
+      rawUser === 'tl@company.com'
+    ) {
+      if (
+        cleanPass === 'vengatesh123' ||
+        cleanPass === 'vengatesh' ||
+        cleanPass === 'tl2026' ||
+        cleanPass === '1234' ||
+        cleanPass === mdPassword ||
+        cleanPass === 'md2026'
+      ) {
+        return {
+          success: true,
+          role: 'MD',
+          repName: 'Vengateshan TL',
+        };
+      }
+      return { success: false, error: 'Incorrect password for Vengateshan TL. Try vengatesh123 or 1234.' };
+    }
+
     if (
       cleanUser === 'md' ||
       cleanUser === 'admin' ||
@@ -589,10 +635,11 @@ export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (!check.success) return check;
 
     if (check.role === 'MD') {
+      const isTL = check.repName === 'Vengateshan TL';
       const newSession: UserSession = {
         isAuthenticated: true,
         role: 'MD',
-        repId: 'MD',
+        repId: isTL ? 'vengateshan' : 'MD',
         repName: check.repName || 'Managing Director',
         isDeviceLocked: false,
       };
@@ -785,7 +832,7 @@ export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }).catch((err) => console.error('Error clearing sales storage:', err));
   };
 
-  const isMD = session.isAuthenticated && session.role === 'MD' && currentRole === 'MD';
+  const isMD = session.isAuthenticated && session.role === 'MD' && (currentRole === 'MD' || currentRole === 'vengateshan');
   const activeRep = reps.find((r) => r.id === currentRole || r.name.toLowerCase() === currentRole.toLowerCase());
 
   const getFilteredSales = () => {
