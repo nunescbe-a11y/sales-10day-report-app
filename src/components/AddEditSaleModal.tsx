@@ -6,6 +6,8 @@ import type { SaleItem, RegionType, StatusCategory } from '../types';
 import { useSales } from '../context/SalesContext';
 import { StatusSelector } from './StatusSelector';
 import { getStaffAvatarUrl } from '../utils/staffAvatars';
+import { SmartFormUploader } from './SmartFormUploader';
+import type { ParsedSaleData } from '../utils/formAutoParser';
 
 interface AddEditSaleModalProps {
   isOpen: boolean;
@@ -53,6 +55,70 @@ export const AddEditSaleModal: React.FC<AddEditSaleModalProps> = ({
 
   const [isGstAmountOverridden, setIsGstAmountOverridden] = useState(false);
   const [manualGstAmount, setManualGstAmount] = useState<number | ''>('');
+
+  const handleApplyParsedData = (data: ParsedSaleData) => {
+    if (data.item) setItem(data.item);
+    if (data.comName) setComName(data.comName);
+    if (data.purCost !== undefined) setPurCost(data.purCost);
+    if (data.lanCost !== undefined) setLanCost(data.lanCost);
+    if (data.sellCost !== undefined) setSellCost(data.sellCost);
+    if (data.advanPay !== undefined) setAdvanPay(data.advanPay);
+    if (data.packingCharges !== undefined) setPackingCharges(data.packingCharges);
+    if (data.forwardingCharges !== undefined) setForwardingCharges(data.forwardingCharges);
+    if (data.gst !== undefined) setGst(data.gst);
+    if (data.inqDate) setInqDate(data.inqDate);
+    if (data.recPayDate) setRecPayDate(data.recPayDate);
+    if (data.purchaserName) setPurchaserName(data.purchaserName);
+    if (data.itemStatus) setItemStatus(data.itemStatus);
+    if (data.statusCategory) setStatusCategory(data.statusCategory);
+    if (data.region) setRegion(data.region);
+    if (data.notes) setNotes(data.notes);
+  };
+
+  const handleBulkImportRows = (rows: ParsedSaleData[]) => {
+    const targetCycle = cycleId || cycles.find((c) => c.isCurrent)?.id || cycles[0]?.id || '2026-11-C2';
+    for (const r of rows) {
+      const sell = r.sellCost || 0;
+      const pur = r.purCost || 0;
+      const lan = r.lanCost || 0;
+      const pack = r.packingCharges || 0;
+      const fwd = r.forwardingCharges || 0;
+      const adv = r.advanPay || 0;
+      const g = r.gst || 18;
+      const gstAmt = Math.round(sell * (g / 100));
+      const overall = Math.round(sell + gstAmt + pack + fwd);
+      const bal = Math.max(0, overall - adv);
+      const profit = sell - pur - lan;
+
+      const todayStr = new Date().toISOString().split('T')[0];
+      addSaleItem({
+        inqDate: r.inqDate || inqDate || todayStr,
+        recPayDate: r.recPayDate || recPayDate || todayStr,
+        item: r.item || 'Imported Sale',
+        comName: r.comName || 'Customer',
+        purCost: pur,
+        lanCost: lan,
+        sellCost: sell,
+        advanPay: adv,
+        packingCharges: pack,
+        forwardingCharges: fwd,
+        gst: g,
+        gstAmount: gstAmt,
+        overallAmount: overall,
+        balance: bal,
+        grossProfit: profit,
+        purchaserName: r.purchaserName || purchaserName || currentRole || 'vengateshan',
+        itemStatus: r.itemStatus || 'Item dispatched by supplier',
+        statusCategory: r.statusCategory || 'Dispatched',
+        cycleId: targetCycle,
+        region: r.region || 'India',
+        isDraft: false,
+        notes: r.notes || 'Auto-parsed from uploaded document',
+      });
+    }
+    onClose();
+  };
+
 
   useEffect(() => {
     if (itemToEdit) {
@@ -296,6 +362,12 @@ export const AddEditSaleModal: React.FC<AddEditSaleModalProps> = ({
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="p-5 space-y-4 max-h-[80vh] overflow-y-auto text-xs">
+              {!itemToEdit && (
+                <SmartFormUploader
+                  onApplyParsedData={handleApplyParsedData}
+                  onBulkImportRows={handleBulkImportRows}
+                />
+              )}
               {/* Row 1: Purchaser, Cycle, Region */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 rounded-lg bg-slate-50 border border-slate-200">
                 <div>

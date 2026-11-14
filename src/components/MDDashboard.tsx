@@ -326,6 +326,15 @@ export const MDDashboard: React.FC<MDDashboardProps> = ({
 
           <button
             onClick={onAddNewItem}
+            className="px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm transition cursor-pointer"
+            title="Upload an Excel, CSV, PDF, or image order form to auto-parse and record sales"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <span>Upload Form</span>
+          </button>
+
+          <button
+            onClick={onAddNewItem}
             className="px-3.5 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm transition cursor-pointer"
           >
             <Plus className="w-4 h-4" />

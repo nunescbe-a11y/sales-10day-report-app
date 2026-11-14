@@ -1,4 +1,6 @@
 import { getStaffAvatarUrl } from '../utils/staffAvatars';
+import { SmartFormUploader } from './SmartFormUploader';
+import type { ParsedSaleData } from '../utils/formAutoParser';
 import React, { useState, useMemo } from 'react';
 import {
   Plus,
@@ -82,6 +84,68 @@ export const SalesRepView: React.FC<SalesRepViewProps> = ({
 
   const [isGstAmountOverridden, setIsGstAmountOverridden] = useState(false);
   const [manualGstAmount, setManualGstAmount] = useState<number | ''>('');
+
+  const handleApplyParsedData = (data: ParsedSaleData) => {
+    if (data.item) setItem(data.item);
+    if (data.comName) setComName(data.comName);
+    if (data.purCost !== undefined) setPurCost(data.purCost);
+    if (data.lanCost !== undefined) setLanCost(data.lanCost);
+    if (data.sellCost !== undefined) setSellCost(data.sellCost);
+    if (data.advanPay !== undefined) setAdvanPay(data.advanPay);
+    if (data.packingCharges !== undefined) setPackingCharges(data.packingCharges);
+    if (data.forwardingCharges !== undefined) setForwardingCharges(data.forwardingCharges);
+    if (data.gst !== undefined) setGst(data.gst);
+    if (data.inqDate) setInqDate(data.inqDate);
+    if (data.recPayDate) setRecPayDate(data.recPayDate);
+    if (data.itemStatus) setItemStatus(data.itemStatus);
+    if (data.statusCategory) setStatusCategory(data.statusCategory);
+    if (data.region) setRegion(data.region);
+  };
+
+  const handleBulkImportRows = (rows: ParsedSaleData[]) => {
+    const targetCycle = selectedCycleId !== 'all' ? selectedCycleId : (cycles.find((c) => c.isCurrent)?.id || cycles[0]?.id || '2026-11-C2');
+    for (const r of rows) {
+      const sell = r.sellCost || 0;
+      const pur = r.purCost || 0;
+      const lan = r.lanCost || 0;
+      const pack = r.packingCharges || 0;
+      const fwd = r.forwardingCharges || 0;
+      const adv = r.advanPay || 0;
+      const g = r.gst || 18;
+      const gstAmt = Math.round(sell * (g / 100));
+      const overall = Math.round(sell + gstAmt + pack + fwd);
+      const bal = Math.max(0, overall - adv);
+      const profit = sell - pur - lan;
+
+      const todayStr = new Date().toISOString().split('T')[0];
+      addSaleItem({
+        inqDate: r.inqDate || inqDate || todayStr,
+        recPayDate: r.recPayDate || recPayDate || todayStr,
+        item: r.item || 'Imported Sale',
+        comName: r.comName || 'Customer',
+        purCost: pur,
+        lanCost: lan,
+        sellCost: sell,
+        advanPay: adv,
+        packingCharges: pack,
+        forwardingCharges: fwd,
+        gst: g,
+        gstAmount: gstAmt,
+        overallAmount: overall,
+        balance: bal,
+        grossProfit: profit,
+        purchaserName: activeRep?.name || currentRole || 'vengateshan',
+        itemStatus: r.itemStatus || 'Item dispatched by supplier',
+        statusCategory: r.statusCategory || 'Dispatched',
+        cycleId: targetCycle,
+        region: r.region || 'India',
+        isDraft: false,
+        notes: r.notes || 'Auto-parsed from uploaded document',
+      });
+    }
+    setActiveTab('sheet');
+  };
+
 
   const repSales = useMemo(() => {
     return getFilteredSales();
@@ -574,6 +638,12 @@ export const SalesRepView: React.FC<SalesRepViewProps> = ({
                 </button>
               </div>
             )}
+
+            {/* Smart Form Auto-Parser & Document Uploader */}
+            <SmartFormUploader
+              onApplyParsedData={handleApplyParsedData}
+              onBulkImportRows={handleBulkImportRows}
+            />
 
             <form onSubmit={handleStaffSubmit} className="space-y-3.5 text-xs sm:text-sm">
               {/* SECTION 1: TRANSACTION & CLIENT IDENTITY */}
