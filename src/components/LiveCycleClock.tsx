@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
 import { 
   Clock, 
-  Calendar, 
   Hourglass,
   ChevronDown,
-  Layers
 } from 'lucide-react';
 import { useSales } from '../context/SalesContext';
 import type { ReportingCycle } from '../types';
+import { generateCycleForDate, formatDateISO } from '../utils/cycleEngine';
 
 export const useLiveClock = () => {
   const [now, setNow] = useState<Date>(new Date());
@@ -81,12 +79,17 @@ export const HeaderLiveClock: React.FC<{ onOpenCycleModal?: () => void }> = ({ o
   const { cycles, selectedCycleId } = useSales();
 
   const currentCycle = useMemo(() => {
+    // If a specific cycle is selected in dropdown
     if (selectedCycleId && selectedCycleId !== 'all') {
       const match = cycles.find((c) => c.id === selectedCycleId);
       if (match) return match;
     }
-    return cycles.find((c) => c.isCurrent) || cycles[cycles.length - 1];
-  }, [cycles, selectedCycleId]);
+    // Default to the active cycle matching current date
+    const isoToday = formatDateISO(now);
+    const todayMatch = cycles.find((c) => isoToday >= c.startDate && isoToday <= c.endDate);
+    if (todayMatch) return todayMatch;
+    return cycles.find((c) => c.isCurrent) || generateCycleForDate(now, true);
+  }, [cycles, selectedCycleId, now]);
 
   const timeRem = useMemo(() => calculateCycleTimeRemaining(now, currentCycle), [now, currentCycle]);
 
@@ -128,7 +131,7 @@ export const HeaderLiveClock: React.FC<{ onOpenCycleModal?: () => void }> = ({ o
               ? 'bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100'
               : 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100'
           }`}
-          title={`Active 10-day cycle: ${currentCycle.name}. Click to manage cycles.`}
+          title={`Active 10-day cycle: ${currentCycle.name}. Click to view cycles.`}
         >
           <Hourglass className="w-3 h-3 shrink-0 animate-spin" style={{ animationDuration: '6s' }} />
           <div className="flex items-center gap-1 font-mono text-[11px] leading-tight">
@@ -162,8 +165,11 @@ export const LiveCycleBanner: React.FC<LiveCycleBannerProps> = ({
       const match = cycles.find((c) => c.id === selectedCycleId);
       if (match) return match;
     }
-    return cycles.find((c) => c.isCurrent) || cycles[cycles.length - 1];
-  }, [cycles, selectedCycleId]);
+    const isoToday = formatDateISO(now);
+    const todayMatch = cycles.find((c) => isoToday >= c.startDate && isoToday <= c.endDate);
+    if (todayMatch) return todayMatch;
+    return cycles.find((c) => c.isCurrent) || generateCycleForDate(now, true);
+  }, [cycles, selectedCycleId, now]);
 
   const timeRem = useMemo(() => calculateCycleTimeRemaining(now, activeCycle), [now, activeCycle]);
 
@@ -174,7 +180,6 @@ export const LiveCycleBanner: React.FC<LiveCycleBannerProps> = ({
     if (currentIndex !== -1 && currentIndex < cycles.length - 1) {
       return cycles[currentIndex + 1];
     }
-    // If last cycle, next is Cycle 1 of following month
     const nextNum = activeCycle.cycleNumber === 3 ? 1 : ((activeCycle.cycleNumber + 1) as 1 | 2 | 3);
     return {
       id: `next-cycle`,
@@ -205,7 +210,6 @@ export const LiveCycleBanner: React.FC<LiveCycleBannerProps> = ({
     <div
       className={`bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl p-4 shadow-sm relative overflow-hidden ${className}`}
     >
-      {/* Ambient gradient line at top */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-amber-500" />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
@@ -218,102 +222,61 @@ export const LiveCycleBanner: React.FC<LiveCycleBannerProps> = ({
             </span>
           </div>
 
-          <div className="flex items-baseline gap-2">
-            <div className="text-2xl sm:text-3xl font-black text-slate-900 font-mono tracking-tight flex items-center gap-1">
-              <span>{timeStr}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
-            <Calendar className="w-3.5 h-3.5 text-blue-600" />
-            <span>{fullDateStr}</span>
-          </div>
-
-          {/* Active Cycle Badge */}
-          {activeCycle && (
-            <div className="pt-1 flex flex-wrap items-center gap-1.5">
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1">
-                <Layers className="w-3 h-3 text-blue-600" />
-                {activeCycle.name}
-              </span>
-              <span className="text-[10px] text-slate-500">
-                (Window: {activeCycle.startDate} to {activeCycle.endDate})
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Right Column: Live Cycle End Countdown & Progress */}
-        <div className="lg:col-span-7 space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <Hourglass className="w-3.5 h-3.5 text-amber-500 animate-spin" style={{ animationDuration: '6s' }} />
-              <span className="text-xs font-bold text-slate-800">
-                10-Day Cycle Deadline Countdown:
-              </span>
-            </div>
-            <span className="text-[10px] font-bold text-slate-500">
-              {timeRem.progressPct}% of 10-Day Period Elapsed
+          <div className="flex items-baseline gap-3">
+            <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-slate-900">
+              {timeStr}
             </span>
           </div>
 
-          {/* 4-Box Digital Countdown Counter */}
-          <div className="grid grid-cols-4 gap-2 text-center font-mono">
-            {/* Days */}
-            <div className="p-2 rounded-xl bg-slate-50 border border-slate-200">
-              <div className="text-lg sm:text-xl font-black text-slate-900">
-                {String(timeRem.days).padStart(2, '0')}
-              </div>
-              <div className="text-[9px] uppercase font-bold text-slate-400 font-sans">Days</div>
-            </div>
+          <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
+            <span>{fullDateStr}</span>
+          </div>
+        </div>
 
-            {/* Hours */}
-            <div className="p-2 rounded-xl bg-slate-50 border border-slate-200">
-              <div className="text-lg sm:text-xl font-black text-slate-900">
-                {String(timeRem.hours).padStart(2, '0')}
-              </div>
-              <div className="text-[9px] uppercase font-bold text-slate-400 font-sans">Hours</div>
+        {/* Right Column: Active 10-Day Cycle Countdown */}
+        <div className="lg:col-span-7 flex flex-col justify-between space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-indigo-100 text-indigo-700">
+                10-Day Cycle
+              </span>
+              <h4 className="text-sm font-bold text-slate-900">
+                {activeCycle?.name || 'Current 10-Day Reporting Period'}
+              </h4>
             </div>
-
-            {/* Minutes */}
-            <div className="p-2 rounded-xl bg-slate-50 border border-slate-200">
-              <div className="text-lg sm:text-xl font-black text-slate-900">
-                {String(timeRem.minutes).padStart(2, '0')}
-              </div>
-              <div className="text-[9px] uppercase font-bold text-slate-400 font-sans">Minutes</div>
-            </div>
-
-            {/* Seconds */}
-            <div className="p-2 rounded-xl bg-amber-50/70 border border-amber-200">
-              <div className="text-lg sm:text-xl font-black text-amber-900">
-                {String(timeRem.seconds).padStart(2, '0')}
-              </div>
-              <div className="text-[9px] uppercase font-bold text-amber-700 font-sans">Seconds</div>
-            </div>
+            <span className="text-xs font-mono font-bold text-slate-500">
+              {activeCycle?.startDate} &rarr; {activeCycle?.endDate}
+            </span>
           </div>
 
-          {/* Cycle Progress Bar */}
-          <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${timeRem.progressPct}%` }}
-              transition={{ duration: 0.8 }}
-              className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-amber-500 rounded-full"
+          {/* Progress bar */}
+          <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+            <div
+              className={`h-full transition-all duration-1000 ${
+                timeRem.progressPct >= 90
+                  ? 'bg-rose-500'
+                  : timeRem.progressPct >= 70
+                  ? 'bg-amber-500'
+                  : 'bg-emerald-500'
+              }`}
+              style={{ width: `${timeRem.progressPct}%` }}
             />
           </div>
 
-          {/* Next Cycle Changeover Notice */}
-          {showNextNotice && nextCycle && (
-            <div className="flex items-center justify-between pt-1 text-[11px] text-slate-600 bg-slate-50/80 px-2.5 py-1.5 rounded-lg border border-slate-200/70">
-              <div className="flex items-center gap-1.5">
-                <span className="font-bold text-slate-800">Next Cycle Changeover:</span>
-                <span className="text-indigo-700 font-semibold">{nextCycle.name}</span>
-              </div>
-              <span className="text-[10px] text-slate-500 hidden sm:inline">
-                Switches automatically on cycle completion
+          <div className="flex items-center justify-between text-xs pt-0.5">
+            <div className="flex items-center gap-1.5 text-slate-500 font-medium">
+              <span>Time Left:</span>
+              <span className="font-mono font-black text-slate-900">
+                {timeRem.days}d {timeRem.hours}h {timeRem.minutes}m {timeRem.seconds}s
               </span>
             </div>
-          )}
+
+            {showNextNotice && nextCycle && (
+              <span className="text-[11px] text-slate-400">
+                Next: <strong className="text-slate-600">{nextCycle.name}</strong>
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>

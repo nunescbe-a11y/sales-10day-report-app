@@ -1,3 +1,4 @@
+import { autoSyncReportingCycles, resolveCycleForSaleDate } from '../utils/cycleEngine';
 import { DEFAULT_AVATARS, AVATAR_YAZHINI, AVATAR_JANANI, AVATAR_VENGATESHAN } from '../utils/staffAvatarsData';
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import type { SaleItem, ReportingCycle, SalesRep, CurrentUserRole, UserSession, CelebrationState, StatusCategory, StatusOption } from '../types';
@@ -138,14 +139,17 @@ export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const [cycles, setCycles] = useState<ReportingCycle[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.CYCLES);
+    let initialList = INITIAL_CYCLES;
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) initialList = parsed;
       } catch (e) {
         console.error('Failed to parse cycles from localStorage', e);
       }
     }
-    return INITIAL_CYCLES;
+    const { updatedCycles } = autoSyncReportingCycles(initialList, new Date());
+    return updatedCycles;
   });
 
   const [reps, setReps] = useState<SalesRep[]>(() => {
@@ -295,7 +299,12 @@ export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   const [selectedCycleId, setSelectedCycleIdState] = useState<string>(() => {
-    return 'all';
+    const saved = localStorage.getItem(STORAGE_KEYS.SELECTED_CYCLE);
+    if (saved && saved !== 'all') {
+      return saved;
+    }
+    const { activeCycle } = autoSyncReportingCycles(INITIAL_CYCLES, new Date());
+    return activeCycle.id;
   });
 
   const [syncStatus, setSyncStatus] = useState<'synced' | 'saving' | 'offline'>('synced');
@@ -306,6 +315,31 @@ export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const lastSyncedDigestRef = useRef<string>(
     JSON.stringify({ sales, cycles, reps, statusOptions })
   );
+  // Continuous 10-day Cycle Auto-Creator & Auto-Rollover Engine
+  useEffect(() => {
+    const syncCyclesWithDate = () => {
+      setCycles((prevCycles) => {
+        const { updatedCycles, activeCycle, hasChanged } = autoSyncReportingCycles(prevCycles, new Date());
+        if (hasChanged) {
+          setSelectedCycleIdState((curSelected) => {
+            const wasOldActive = prevCycles.some((c) => c.id === curSelected && !c.isCurrent);
+            if (wasOldActive || !curSelected) {
+              return activeCycle.id;
+            }
+            return curSelected;
+          });
+          localStorage.setItem(STORAGE_KEYS.CYCLES, JSON.stringify(updatedCycles));
+          return updatedCycles;
+        }
+        return prevCycles;
+      });
+    };
+
+    syncCyclesWithDate();
+    const interval = setInterval(syncCyclesWithDate, 15000);
+    return () => clearInterval(interval);
+  }, []);
+
 
   // 1. Initial Load from Permanent Server Storage (Merges with local so nothing is ever lost on updates)
   useEffect(() => {
@@ -336,10 +370,11 @@ export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               nextSales = serverSales;
             }
 
-            const nextCycles =
+            const baseCycles =
               data.cycles && Array.isArray(data.cycles) && data.cycles.length > 0
                 ? data.cycles
                 : cur.cycles;
+            const { updatedCycles: nextCycles } = autoSyncReportingCycles(baseCycles, new Date());
 
             const nextReps =
               data.reps && Array.isArray(data.reps) && data.reps.length > 0
@@ -724,8 +759,14 @@ export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const addSaleItem = (itemData: Omit<SaleItem, 'id' | 'slNo' | 'updatedAt'>) => {
     const newSlNo = sales.length > 0 ? Math.max(...sales.map((s) => s.slNo || 0)) + 1 : 1;
+    let assignedCycle = itemData.cycleId;
+    if (!assignedCycle || assignedCycle === 'all') {
+      const targetDate = itemData.recPayDate || itemData.inqDate;
+      assignedCycle = resolveCycleForSaleDate(targetDate, cycles);
+    }
     const newItem: SaleItem = {
       ...itemData,
+      cycleId: assignedCycle,
       id: `sale-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       slNo: newSlNo,
       updatedAt: new Date().toISOString(),
