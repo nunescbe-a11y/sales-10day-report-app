@@ -4,7 +4,6 @@ import {
   Crown, 
   UserPlus, 
   FileSpreadsheet,
-  Plus,
   HardDriveDownload,
   HardDriveUpload,
   UserCheck,
@@ -16,13 +15,12 @@ import { StaffLoginModal } from './StaffLoginModal';
 import { HeaderLiveClock } from './LiveCycleClock';
 
 interface HeaderProps {
-  onOpenAddModal: () => void;
+  onOpenAddModal?: () => void;
   onOpenCycleModal?: () => void;
   onOpenAddRepModal: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  onOpenAddModal,
   onOpenCycleModal,
   onOpenAddRepModal,
 }) => {
@@ -161,14 +159,7 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           )}
 
-          {/* Add Sale Button */}
-          <button
-            onClick={onOpenAddModal}
-            className="px-3.5 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm shadow-indigo-600/30 transition cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Row</span>
-          </button>
+          
 
           {/* Add Rep button (MD only) */}
           {isMD && (
