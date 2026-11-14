@@ -49,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-sm font-bold tracking-tight leading-none text-slate-900">
-                Nunes 10-Day Sales Report Hub
+                Nunes Sales Hub
               </h1>
 
             </div>
