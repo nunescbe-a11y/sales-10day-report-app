@@ -343,25 +343,31 @@ export const AddEditSaleModal: React.FC<AddEditSaleModalProps> = ({
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-[11px] font-semibold text-slate-700 flex items-center gap-1">
-                      <Calendar className="w-3 h-3 text-emerald-600" />
-                      10-Day Reporting Cycle <span className="text-rose-500">*</span>
+                    <label className="text-[11px] font-semibold text-slate-700 flex items-center gap-1 shrink-0">
+                      <Calendar className="w-3 h-3 text-emerald-600 shrink-0" />
+                      <span>10-Day Cycle <span className="text-rose-500">*</span></span>
                     </label>
                     {onOpenCycleModal && (
                       <button
                         type="button"
                         onClick={onOpenCycleModal}
-                        className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5 cursor-pointer"
+                        className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5 cursor-pointer shrink-0"
                         title="Add or Manage 10-Day Timing Periods"
                       >
-                        <Plus className="w-3 h-3" />
-                        <span>+ 10-Day Timing</span>
+                        <Plus className="w-2.5 h-2.5" />
+                        <span>+ Timing</span>
                       </button>
                     )}
                   </div>
                   <select
                     value={cycleId}
-                    onChange={(e) => setCycleId(e.target.value)}
+                    onChange={(e) => {
+                      if (e.target.value === '__NEW_CYCLE__') {
+                        if (onOpenCycleModal) onOpenCycleModal();
+                      } else {
+                        setCycleId(e.target.value);
+                      }
+                    }}
                     className="w-full bg-white border border-slate-300 rounded-md px-2.5 py-1 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium"
                   >
                     {cycles.map((c) => (
@@ -369,6 +375,9 @@ export const AddEditSaleModal: React.FC<AddEditSaleModalProps> = ({
                         {c.name}
                       </option>
                     ))}
+                    <option value="__NEW_CYCLE__" className="text-indigo-600 font-bold">
+                      ➕ + Add New 10-Day Timing...
+                    </option>
                   </select>
                 </div>
 

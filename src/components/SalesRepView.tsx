@@ -430,7 +430,13 @@ export const SalesRepView: React.FC<SalesRepViewProps> = ({
           </span>
           <select
             value={selectedCycleId}
-            onChange={(e) => setSelectedCycleId(e.target.value)}
+            onChange={(e) => {
+              if (e.target.value === '__NEW_CYCLE__') {
+                if (onOpenCycleManager) onOpenCycleManager();
+              } else {
+                setSelectedCycleId(e.target.value);
+              }
+            }}
             className={`bg-transparent text-[11px] font-bold focus:outline-none cursor-pointer ${
               isDark ? 'text-white' : 'text-slate-800'
             }`}
@@ -441,6 +447,9 @@ export const SalesRepView: React.FC<SalesRepViewProps> = ({
                 {c.name}
               </option>
             ))}
+            <option value="__NEW_CYCLE__" className="text-emerald-600 font-bold">
+              ➕ + Add 10-Day Timing...
+            </option>
           </select>
           {onOpenCycleManager && (
             <button

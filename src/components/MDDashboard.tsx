@@ -285,7 +285,13 @@ export const MDDashboard: React.FC<MDDashboardProps> = ({
             </span>
             <select
               value={selectedCycleId}
-              onChange={(e) => setSelectedCycleId(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value === '__NEW_CYCLE__') {
+                  if (onOpenCycleModal) onOpenCycleModal();
+                } else {
+                  setSelectedCycleId(e.target.value);
+                }
+              }}
               className={`rounded px-2 py-0.5 text-xs sm:text-sm font-semibold cursor-pointer focus:outline-none border ${
                 'bg-white border-slate-300 text-slate-800'
               }`}
@@ -299,6 +305,9 @@ export const MDDashboard: React.FC<MDDashboardProps> = ({
                   </option>
                 );
               })}
+              <option value="__NEW_CYCLE__" className="text-emerald-700 font-bold">
+                ➕ + Add New 10-Day Timing...
+              </option>
             </select>
 
             {/* + Add 10-Day Timing Button */}
