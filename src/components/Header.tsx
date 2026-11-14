@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useSales } from '../context/SalesContext';
 import { StaffLoginModal } from './StaffLoginModal';
+import { HeaderLiveClock } from './LiveCycleClock';
 
 interface HeaderProps {
   onOpenAddModal: () => void;
@@ -22,6 +23,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   onOpenAddModal,
+  onOpenCycleModal,
   onOpenAddRepModal,
 }) => {
   const {
@@ -89,6 +91,8 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Action Controls */}
         <div className="flex items-center gap-2">
+          {/* Live 10-Day Cycle Countdown Timer & Click-to-Manage Timing */}
+          <HeaderLiveClock onOpenCycleModal={onOpenCycleModal} />
           {/* Authenticated Profile Card (Switchable only if logged in as MD) */}
           {session.role === 'MD' ? (
             <button

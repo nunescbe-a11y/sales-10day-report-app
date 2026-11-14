@@ -79,6 +79,7 @@ const MainContent: React.FC = () => {
               <MDDashboard
                 onEditItem={handleEditItem}
                 onAddNewItem={handleAddNewItem}
+                onOpenCycleModal={() => setIsCycleModalOpen(true)}
                 onOpenResetPassword={handleOpenReset}
               />
             </motion.div>

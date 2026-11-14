@@ -29,6 +29,7 @@ interface SalesRepViewProps {
 export const SalesRepView: React.FC<SalesRepViewProps> = ({
   onEditItem: _onEditItem,
   onAddNewItem: _onAddNewItem,
+  onOpenCycleManager,
 }) => {
   const {
     activeRep,
@@ -441,6 +442,17 @@ export const SalesRepView: React.FC<SalesRepViewProps> = ({
               </option>
             ))}
           </select>
+          {onOpenCycleManager && (
+            <button
+              type="button"
+              onClick={onOpenCycleManager}
+              title="View & Add 10-Day Cycle Timing Periods"
+              className="ml-1.5 pl-1.5 border-l border-slate-300 dark:border-zinc-700 text-[10px] font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 flex items-center gap-0.5 cursor-pointer"
+            >
+              <Plus className="w-2.5 h-2.5" />
+              <span>Timing</span>
+            </button>
+          )}
         </div>
       </div>
 

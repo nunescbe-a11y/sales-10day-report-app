@@ -40,6 +40,7 @@ import { getStaffAvatarUrl } from '../utils/staffAvatars';
 interface MDDashboardProps {
   onEditItem: (item: SaleItem) => void;
   onAddNewItem: () => void;
+  onOpenCycleModal?: () => void;
   onOpenResetPassword?: (username?: string) => void;
 }
 
@@ -48,6 +49,7 @@ const LIGHT_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#0
 export const MDDashboard: React.FC<MDDashboardProps> = ({
   onEditItem,
   onAddNewItem,
+  onOpenCycleModal,
   onOpenResetPassword,
 }) => {
   const { sales, reps, cycles, selectedCycleId, setSelectedCycleId, theme, deleteSaleItem } = useSales();
@@ -298,6 +300,19 @@ export const MDDashboard: React.FC<MDDashboardProps> = ({
                 );
               })}
             </select>
+
+            {/* + Add 10-Day Timing Button */}
+            {onOpenCycleModal && (
+              <button
+                type="button"
+                onClick={onOpenCycleModal}
+                title="Add or Manage 10-Day Cycle Timing Periods"
+                className="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl text-xs font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer shrink-0"
+              >
+                <Plus className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="hidden sm:inline">+ 10-Day Timing</span>
+              </button>
+            )}
           </div>
 
           <button
@@ -942,9 +957,21 @@ export const MDDashboard: React.FC<MDDashboardProps> = ({
           <LiveCycleBanner showNextNotice={true} />
 
           <div className="border-t border-slate-100 pt-3">
-            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
-              10-Day Cycle Accounting Timeline & Revenue Performance
-            </h3>
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                10-Day Cycle Accounting Timeline & Revenue Performance
+              </h3>
+              {onOpenCycleModal && (
+                <button
+                  type="button"
+                  onClick={onOpenCycleModal}
+                  className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>+ Add New 10-Day Timing Period</span>
+                </button>
+              )}
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {cycles.map((c) => {
                 const cSales = sales.filter((s) => s.cycleId === c.id);
