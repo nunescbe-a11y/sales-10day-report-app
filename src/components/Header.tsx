@@ -1,4 +1,5 @@
 import { getStaffAvatarUrl } from '../utils/staffAvatars';
+import { AVATAR_VENGATESHAN } from '../utils/staffAvatarsData';
 import React, { useState } from 'react';
 import { 
   Crown, 
@@ -7,8 +8,7 @@ import {
   HardDriveDownload,
   HardDriveUpload,
   UserCheck,
-  LogOut,
-  Smartphone
+  LogOut
 } from 'lucide-react';
 import { useSales } from '../context/SalesContext';
 import { StaffLoginModal } from './StaffLoginModal';
@@ -54,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             </div>
             <p className="text-[10px] mt-0.5 text-slate-500">
-              {isMD ? (session.repName === 'Vengateshan TL' ? 'Team Lead • Executive All-Company Oversight' : 'Executive All-Company Oversight') : `Staff View: ${session.repName || currentRole}`}
+              {isMD ? (session.repName === 'Vengateshan TL' ? 'Team Lead • Executive All-Company Oversight & Staff Monitoring' : 'Executive All-Company Oversight') : `Staff View: ${session.repName || currentRole}`}
             </p>
           </div>
         </div>
@@ -69,9 +69,15 @@ export const Header: React.FC<HeaderProps> = ({
               type="button"
               onClick={() => setIsStaffLoginOpen(true)}
               className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-900 transition cursor-pointer shadow-xs"
-              title="Click to preview a staff member's workspace"
+              title="Click to inspect staff members' workspaces"
             >
-              {getStaffAvatarUrl(activeRep?.name || currentRole, reps) || activeRep?.avatarUrl ? (
+              {session.repName === 'Vengateshan TL' && currentRole === 'MD' ? (
+                <img
+                  src={AVATAR_VENGATESHAN}
+                  alt="Vengateshan TL"
+                  className="w-7 h-7 rounded-full object-cover border-2 border-emerald-500 shrink-0 shadow-xs"
+                />
+              ) : getStaffAvatarUrl(activeRep?.name || currentRole, reps) || activeRep?.avatarUrl ? (
                 <img
                   src={getStaffAvatarUrl(activeRep?.name || currentRole, reps) || activeRep?.avatarUrl}
                   alt={activeRep ? activeRep.displayName : 'Staff'}
@@ -88,10 +94,14 @@ export const Header: React.FC<HeaderProps> = ({
               )}
               <div className="text-left hidden sm:block">
                 <span className="block text-xs font-black leading-tight text-slate-900">
-                  {activeRep ? activeRep.displayName : 'MD Executive'}
+                  {currentRole === 'MD'
+                    ? (session.repName === 'Vengateshan TL' ? 'Vengateshan TL' : 'MD Executive')
+                    : (activeRep ? activeRep.displayName : 'Staff')}
                 </span>
                 <span className="block text-[10px] text-indigo-600 font-bold uppercase tracking-wider">
-                  {session.repName === 'Vengateshan TL' ? 'TL Oversight • Switch View' : 'MD Oversight • Switch View'}
+                  {session.repName === 'Vengateshan TL'
+                    ? (currentRole === 'MD' ? 'Team Lead • Monitor' : 'Inspecting Staff Workspace')
+                    : (currentRole === 'MD' ? 'Director • Oversight' : 'Inspecting Staff Workspace')}
                 </span>
               </div>
               <UserCheck className="w-4 h-4 text-indigo-600 hidden md:block" />
@@ -147,8 +157,8 @@ export const Header: React.FC<HeaderProps> = ({
                 onChange={(e) => setCurrentRole(e.target.value)}
                 className="border border-slate-300 rounded-lg px-2.5 py-1 text-xs sm:text-sm font-bold bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer shadow-xs"
               >
-                <option value="MD">{session.repName === 'Vengateshan TL' ? '⭐ TL All-Company Dashboard' : '👑 MD All-Company Dashboard'}</option>
-                <optgroup label="Staff Sales Workspace">
+                <option value="MD">{session.repName === 'Vengateshan TL' ? '⭐ TL Monitoring & Oversight Dashboard' : '👑 MD All-Company Dashboard'}</option>
+                <optgroup label="Inspect Staff Sales Workspace">
                   {reps.map((r) => (
                     <option key={r.id} value={r.name}>
                       👤 {r.displayName}
@@ -212,16 +222,7 @@ export const Header: React.FC<HeaderProps> = ({
             </label>
           )}
 
-                    {/* Phone App Install Button */}
-          <button
-            type="button"
-            onClick={() => window.dispatchEvent(new CustomEvent('trigger-install-prompt'))}
-            title="Install Nunes Sales App on Phone"
-            className="px-2.5 py-1.5 rounded-xl border border-indigo-200 bg-indigo-50/70 hover:bg-indigo-100 text-indigo-700 transition cursor-pointer flex items-center gap-1.5 shadow-2xs"
-          >
-            <Smartphone className="w-3.5 h-3.5 text-indigo-600" />
-            <span className="text-xs font-bold hidden sm:inline">Phone App</span>
-          </button>
+                    
 
           {/* Logout Button */}
           <button

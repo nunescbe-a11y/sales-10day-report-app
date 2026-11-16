@@ -13,10 +13,12 @@ import {
 } from 'lucide-react';
 import { useSales } from '../context/SalesContext';
 import { getStaffAvatarUrl } from '../utils/staffAvatars';
+import { AVATAR_VENGATESHAN } from '../utils/staffAvatarsData';
 import type { SalesRep } from '../types';
 
 type SelectedIdentity =
   | { type: 'MD'; displayName: string; username: string; roleLabel: string }
+  | { type: 'TL'; displayName: string; username: string; roleLabel: string }
   | { type: 'REP'; rep: SalesRep };
 
 export const ProfessionalLogin: React.FC = () => {
@@ -49,6 +51,19 @@ export const ProfessionalLogin: React.FC = () => {
     return () => clearInterval(t);
   }, []);
 
+  const handleSelectTL = () => {
+    setSelected({
+      type: 'TL',
+      displayName: 'Vengateshan TL',
+      username: 'vengateshan',
+      roleLabel: 'Team Lead • Executive Oversight & Staff Monitoring',
+    });
+    setPassword('');
+    setError('');
+    setShowHelpNote(false);
+    setTimeout(() => passwordInputRef.current?.focus(), 80);
+  };
+
   const handleSelectMD = () => {
     setSelected({
       type: 'MD',
@@ -80,7 +95,7 @@ export const ProfessionalLogin: React.FC = () => {
     }
 
     const usernameToVerify =
-      selected.type === 'MD' ? 'md' : selected.rep.username || selected.rep.name;
+      selected.type === 'MD' ? 'md' : selected.type === 'TL' ? 'vengateshan' : selected.rep.username || selected.rep.name;
 
     const result = loginWithCredentials(usernameToVerify, password);
     if (!result.success) {
@@ -93,7 +108,9 @@ export const ProfessionalLogin: React.FC = () => {
   };
 
   const selectedAvatarUrl =
-    selected?.type === 'REP'
+    selected?.type === 'TL'
+      ? AVATAR_VENGATESHAN
+      : selected?.type === 'REP'
       ? getStaffAvatarUrl(selected.rep.name, reps) || selected.rep.avatarUrl
       : undefined;
 
@@ -162,7 +179,31 @@ export const ProfessionalLogin: React.FC = () => {
 
               {/* Horizontal Apple Desktop Circular Portraits Row */}
               <div className="flex flex-wrap items-start justify-center gap-6 sm:gap-8">
-                {reps.filter(r => r.id !== 'naveena' && r.name !== 'naveena' && r.id !== 'ready stock' && r.name !== 'ready stock' && r.id !== 'pranesh').map((rep) => {
+                {/* Team Lead Monitor Card (Vengateshan TL - Monitoring & Oversight) */}
+                <button
+                  type="button"
+                  onClick={handleSelectTL}
+                  className="group flex flex-col items-center gap-2.5 w-24 sm:w-28 cursor-pointer focus:outline-none"
+                >
+                  <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-[3px] border-white ring-2 ring-emerald-400 shadow-lg group-hover:scale-105 group-hover:ring-3 group-hover:ring-emerald-500 group-hover:shadow-xl transition-all duration-200 bg-white">
+                    <img
+                      src={AVATAR_VENGATESHAN}
+                      alt="Vengateshan TL"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="text-center">
+                    <span className="block text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition">
+                      Vengateshan TL
+                    </span>
+                    <span className="block text-[11px] font-semibold text-emerald-800">
+                      ⭐ Team Lead (Monitor)
+                    </span>
+                  </div>
+                </button>
+
+                {/* Sales Staff Cards (Yazhini P & Janani U) */}
+                {reps.filter(r => r.id !== 'vengateshan' && r.name !== 'vengateshan' && r.id !== 'tl' && r.name !== 'tl' && r.id !== 'naveena' && r.name !== 'naveena' && r.id !== 'ready stock' && r.name !== 'ready stock' && r.id !== 'pranesh').map((rep) => {
                   const avatarUrl =
                     getStaffAvatarUrl(rep.name, reps) || rep.avatarUrl;
                   return (
@@ -194,7 +235,7 @@ export const ProfessionalLogin: React.FC = () => {
                           {rep.displayName}
                         </span>
                         <span className="block text-[11px] font-semibold text-slate-500">
-                          {rep.id === 'vengateshan' ? '⭐ Team Lead (Full Access)' : 'Sales Rep'}
+                          Sales Staff
                         </span>
                       </div>
                     </button>
@@ -233,7 +274,15 @@ export const ProfessionalLogin: React.FC = () => {
             >
               {/* Large Centered Circular Hero Avatar */}
               <div className="relative mb-4">
-                {selected.type === 'REP' ? (
+                {selected.type === 'TL' ? (
+                  <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white ring-2 ring-emerald-400 shadow-2xl bg-white">
+                    <img
+                      src={AVATAR_VENGATESHAN}
+                      alt="Vengateshan TL"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : selected.type === 'REP' ? (
                   <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white ring-1 ring-slate-200 shadow-2xl bg-white">
                     {selectedAvatarUrl ? (
                       <img
@@ -260,14 +309,14 @@ export const ProfessionalLogin: React.FC = () => {
 
               {/* Clean Apple-Style User Title */}
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-                {selected.type === 'MD'
-                  ? selected.displayName
-                  : selected.rep.displayName}
+                {selected.type === 'REP'
+                  ? selected.rep.displayName
+                  : selected.displayName}
               </h2>
               <p className="text-xs text-slate-500 font-medium mt-0.5 mb-5">
-                {selected.type === 'MD'
-                  ? selected.roleLabel
-                  : `Personal Account (@${selected.rep.username || selected.rep.name})`}
+                {selected.type === 'REP'
+                  ? `Sales Staff Account (@${selected.rep.username || selected.rep.name})`
+                  : selected.roleLabel}
               </p>
 
               {/* Signature macOS Pill Password Input + Inline Submit Arrow */}

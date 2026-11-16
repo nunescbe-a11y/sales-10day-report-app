@@ -1,4 +1,4 @@
-import { AVATAR_YAZHINI, AVATAR_JANANI, AVATAR_VENGATESHAN } from '../utils/staffAvatarsData';
+import { AVATAR_YAZHINI, AVATAR_JANANI } from '../utils/staffAvatarsData';
 import type { SaleItem, ReportingCycle, SalesRep, StatusOption } from '../types';
 
 export const INITIAL_STATUS_OPTIONS: StatusOption[] = [
@@ -10,18 +10,6 @@ export const INITIAL_STATUS_OPTIONS: StatusOption[] = [
 ];
 
 export const INITIAL_REPS: SalesRep[] = [
-  {
-    id: 'vengateshan',
-    username: 'vengateshan',
-    password: 'vengatesh123',
-    name: 'vengateshan',
-    displayName: 'Vengateshan TL',
-    email: 'vengateshan@company.com',
-    pin: '1234',
-    avatarColor: 'bg-emerald-600',
-    avatarUrl: AVATAR_VENGATESHAN,
-    targetAmount: 150000,
-  },
   {
     id: 'yazhini',
     username: 'yazhini',
@@ -176,7 +164,7 @@ export const INITIAL_SALES: SaleItem[] = [
     "gst": 18,
     "overallAmount": 6296,
     "grossProfit": 1093,
-    "purchaserName": "vengateshan",
+    "purchaserName": "yazhini",
     "itemStatus": "dispatched by 30/10/26",
     "statusCategory": "Dispatched",
     "cycleId": "2026-10-C1",
@@ -201,7 +189,7 @@ export const INITIAL_SALES: SaleItem[] = [
     "gst": 18,
     "overallAmount": 4700,
     "grossProfit": 4700,
-    "purchaserName": "vengateshan",
+    "purchaserName": "yazhini",
     "itemStatus": "saled",
     "statusCategory": "Delivered / Saled",
     "cycleId": "2026-10-C1",

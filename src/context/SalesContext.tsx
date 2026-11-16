@@ -82,6 +82,12 @@ const attachAvatars = (repList: SalesRep[]): SalesRep[] => {
       const idKey = (r.id || '').toLowerCase();
       const nameKey = (r.name || '').toLowerCase();
       return (
+        idKey !== 'vengateshan' &&
+        nameKey !== 'vengateshan' &&
+        idKey !== 'vengatesh' &&
+        nameKey !== 'vengatesh' &&
+        idKey !== 'tl' &&
+        nameKey !== 'tl' &&
         idKey !== 'naveena' &&
         nameKey !== 'naveena' &&
         idKey !== 'ready stock' &&

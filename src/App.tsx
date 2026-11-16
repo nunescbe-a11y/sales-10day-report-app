@@ -1,4 +1,3 @@
-import { InstallAppBanner } from './components/InstallAppBanner';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -132,7 +131,7 @@ const MainContent: React.FC = () => {
       />
 
       
-      {/* Mobile-Friendly Thumb Navigation for Phones */}
+      {/* Mobile-Friendly Navigation */}
       <MobileBottomNav
         onOpenUploadModal={handleAddNewItem}
         onOpenCycleModal={() => setIsCycleModalOpen(true)}
@@ -160,7 +159,6 @@ export default function App() {
   return (
     <SalesProvider>
       <MainContent />
-      <InstallAppBanner />
     </SalesProvider>
   );
 }

@@ -52,7 +52,7 @@ export const MDDashboard: React.FC<MDDashboardProps> = ({
   onOpenCycleModal,
   onOpenResetPassword,
 }) => {
-  const { sales, reps, cycles, selectedCycleId, setSelectedCycleId, theme, deleteSaleItem } = useSales();
+  const { sales, reps, cycles, selectedCycleId, setSelectedCycleId, theme, deleteSaleItem, session } = useSales();
   const isDark = theme === 'dark';
 
   // Tab switcher for TRUE PAGE-FIT
@@ -195,10 +195,14 @@ export const MDDashboard: React.FC<MDDashboardProps> = ({
           </div>
           <div>
             <h2 className="text-sm sm:text-base font-black leading-tight text-slate-900">
-              Managing Director Executive Command
+              {session.repName === 'Vengateshan TL'
+                ? 'Team Lead Executive Monitoring Command'
+                : 'Managing Director Executive Command'}
             </h2>
             <p className="text-xs mt-0.5 font-medium text-slate-500">
-              10-Day Payment Analytics • Master Sales Oversight
+              {session.repName === 'Vengateshan TL'
+                ? '10-Day Cycle Staff Monitoring • Sales & Payment Oversight'
+                : '10-Day Payment Analytics • Master Sales Oversight'}
             </p>
           </div>
         </div>

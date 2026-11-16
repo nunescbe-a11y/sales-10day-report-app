@@ -107,7 +107,7 @@ export const AddEditSaleModal: React.FC<AddEditSaleModalProps> = ({
         overallAmount: overall,
         balance: bal,
         grossProfit: profit,
-        purchaserName: r.purchaserName || purchaserName || currentRole || 'vengateshan',
+        purchaserName: r.purchaserName || purchaserName || currentRole || 'yazhini',
         itemStatus: r.itemStatus || 'Item dispatched by supplier',
         statusCategory: r.statusCategory || 'Dispatched',
         cycleId: targetCycle,
