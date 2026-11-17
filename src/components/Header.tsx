@@ -12,8 +12,6 @@ import {
 } from 'lucide-react';
 import { useSales } from '../context/SalesContext';
 import { StaffLoginModal } from './StaffLoginModal';
-import { HeaderLiveClock } from './LiveCycleClock';
-
 interface HeaderProps {
   onOpenAddModal?: () => void;
   onOpenCycleModal?: () => void;
@@ -21,7 +19,6 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  onOpenCycleModal,
   onOpenAddRepModal,
 }) => {
   const {
@@ -61,8 +58,6 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Action Controls */}
         <div className="flex items-center gap-2">
-          {/* Live 10-Day Cycle Countdown Timer & Click-to-Manage Timing */}
-          <HeaderLiveClock onOpenCycleModal={onOpenCycleModal} />
           {/* Authenticated Profile Card (Switchable only if logged in as MD) */}
           {session.role === 'MD' ? (
             <button
@@ -106,33 +101,7 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
               <UserCheck className="w-4 h-4 text-indigo-600 hidden md:block" />
             </button>
-          ) : (
-            <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-indigo-200 bg-indigo-50/50 text-slate-900 shadow-xs">
-              {getStaffAvatarUrl(activeRep?.name || session.repId, reps) || activeRep?.avatarUrl ? (
-                <img
-                  src={getStaffAvatarUrl(activeRep?.name || session.repId, reps) || activeRep?.avatarUrl}
-                  alt={activeRep ? activeRep.displayName : session.repName}
-                  className="w-7 h-7 rounded-full object-cover border-2 border-indigo-500 shrink-0 shadow-xs"
-                />
-              ) : (
-                <div
-                  className={`w-7 h-7 rounded-full ${
-                    activeRep?.avatarColor || 'bg-indigo-600'
-                  } text-white text-xs font-black flex items-center justify-center shrink-0 shadow-xs`}
-                >
-                  {(activeRep?.displayName || session.repName || 'U').charAt(0)}
-                </div>
-              )}
-              <div className="text-left hidden sm:block">
-                <span className="block text-xs font-black leading-tight text-slate-900">
-                  {activeRep ? activeRep.displayName : session.repName}
-                </span>
-                <span className="block text-[10px] text-emerald-700 font-bold uppercase tracking-wider">
-                  Signed In
-                </span>
-              </div>
-            </div>
-          )}
+          ) : null}
 
           {/* User Role Switcher - Available strictly to Managing Director */}
           {session.role === 'MD' && (
