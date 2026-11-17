@@ -1,17 +1,14 @@
 import { getStaffAvatarUrl } from '../utils/staffAvatars';
-import { AVATAR_VENGATESHAN } from '../utils/staffAvatarsData';
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Crown, 
   UserPlus, 
   FileSpreadsheet,
   HardDriveDownload,
   HardDriveUpload,
-  UserCheck,
   LogOut
 } from 'lucide-react';
 import { useSales } from '../context/SalesContext';
-import { StaffLoginModal } from './StaffLoginModal';
 interface HeaderProps {
   onOpenAddModal?: () => void;
   onOpenCycleModal?: () => void;
@@ -32,8 +29,7 @@ export const Header: React.FC<HeaderProps> = ({
     logout,
   } = useSales();
 
-  const [isStaffLoginOpen, setIsStaffLoginOpen] = useState(false);
-  const activeRep = reps.find((r) => r.name.toLowerCase() === currentRole.toLowerCase() || r.id === currentRole);
+
 
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-slate-200 text-slate-900 shadow-xs">
@@ -58,50 +54,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Action Controls */}
         <div className="flex items-center gap-2">
-          {/* Authenticated Profile Card (Switchable only if logged in as MD) */}
-          {session.role === 'MD' ? (
-            <button
-              type="button"
-              onClick={() => setIsStaffLoginOpen(true)}
-              className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-900 transition cursor-pointer shadow-xs"
-              title="Click to inspect staff members' workspaces"
-            >
-              {session.repName === 'Vengateshan TL' && currentRole === 'MD' ? (
-                <img
-                  src={AVATAR_VENGATESHAN}
-                  alt="Vengateshan TL"
-                  className="w-7 h-7 rounded-full object-cover border-2 border-emerald-500 shrink-0 shadow-xs"
-                />
-              ) : getStaffAvatarUrl(activeRep?.name || currentRole, reps) || activeRep?.avatarUrl ? (
-                <img
-                  src={getStaffAvatarUrl(activeRep?.name || currentRole, reps) || activeRep?.avatarUrl}
-                  alt={activeRep ? activeRep.displayName : 'Staff'}
-                  className="w-7 h-7 rounded-full object-cover border-2 border-indigo-500 shrink-0 shadow-xs"
-                />
-              ) : (
-                <div
-                  className={`w-7 h-7 rounded-full ${
-                    activeRep?.avatarColor || 'bg-gradient-to-tr from-amber-500 to-orange-500'
-                  } text-white text-xs font-black flex items-center justify-center shrink-0 shadow-xs`}
-                >
-                  {activeRep ? activeRep.displayName.charAt(0) : '👑'}
-                </div>
-              )}
-              <div className="text-left hidden sm:block">
-                <span className="block text-xs font-black leading-tight text-slate-900">
-                  {currentRole === 'MD'
-                    ? (session.repName === 'Vengateshan TL' ? 'Vengateshan TL' : 'MD Executive')
-                    : (activeRep ? activeRep.displayName : 'Staff')}
-                </span>
-                <span className="block text-[10px] text-indigo-600 font-bold uppercase tracking-wider">
-                  {session.repName === 'Vengateshan TL'
-                    ? (currentRole === 'MD' ? 'Team Lead • Monitor' : 'Inspecting Staff Workspace')
-                    : (currentRole === 'MD' ? 'Director • Oversight' : 'Inspecting Staff Workspace')}
-                </span>
-              </div>
-              <UserCheck className="w-4 h-4 text-indigo-600 hidden md:block" />
-            </button>
-          ) : null}
+
 
           {/* User Role Switcher - Available strictly to Managing Director */}
           {session.role === 'MD' && (
@@ -197,7 +150,6 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => {
-              setIsStaffLoginOpen(false);
               logout();
             }}
             title="Sign out to Profile Login Screen"
@@ -209,10 +161,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      <StaffLoginModal
-        isOpen={isStaffLoginOpen}
-        onClose={() => setIsStaffLoginOpen(false)}
-      />
+
     </header>
   );
 };
