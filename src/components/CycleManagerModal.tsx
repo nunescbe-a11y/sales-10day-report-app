@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Plus, Zap, CheckCircle2, Clock } from 'lucide-react';
 import { useSales } from '../context/SalesContext';
 import type { ReportingCycle } from '../types';
+import { useLiveClock, calculateCycleTimeRemaining } from './LiveCycleClock';
 
 interface CycleManagerModalProps {
   isOpen: boolean;
@@ -76,6 +77,7 @@ export function getNextCycleRecommendation(existingCycles: ReportingCycle[]) {
 
 export const CycleManagerModal: React.FC<CycleManagerModalProps> = ({ isOpen, onClose }) => {
   const { cycles, addCycle, setActiveCycle, setSelectedCycleId, selectedCycleId, sales, reps } = useSales();
+  const now = useLiveClock();
 
   const [cycleName, setCycleName] = useState('');
   const [month, setMonth] = useState('2026-11');
@@ -176,6 +178,26 @@ export const CycleManagerModal: React.FC<CycleManagerModalProps> = ({ isOpen, on
                   <span>{successMsg}</span>
                 </div>
               )}
+
+              {/* Automated Cycle Engine Status Banner */}
+              <div className="p-2.5 rounded-xl bg-emerald-50/90 border border-emerald-200 text-emerald-900 text-xs flex items-center justify-between gap-2 shadow-2xs">
+                <div className="flex items-center gap-2">
+                  <div className="p-1 rounded bg-emerald-100 text-emerald-700">
+                    <Zap className="w-3.5 h-3.5 fill-emerald-600 text-emerald-600" />
+                  </div>
+                  <div>
+                    <span className="font-extrabold text-[11px] text-emerald-950 block">
+                      Automatic 10-Day Cycle Rollover Engine: Active
+                    </span>
+                    <span className="text-[10px] text-emerald-700 font-medium">
+                      When current period ends, the next 10-day cycle is automatically created, added, and activated.
+                    </span>
+                  </div>
+                </div>
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-600 text-white shrink-0 tracking-wide">
+                  AUTO-ENABLED
+                </span>
+              </div>
 
               {/* Action Toolbar */}
               <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-indigo-50/60 border border-indigo-100 rounded-xl">
@@ -358,12 +380,20 @@ export const CycleManagerModal: React.FC<CycleManagerModalProps> = ({ isOpen, on
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-bold text-slate-900 text-xs">{c.name}</span>
-                          {isCurrentActive && (
-                            <span className="text-[10px] font-extrabold bg-emerald-600 text-white px-2 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-200 animate-ping" />
-                              Active Timer
-                            </span>
-                          )}
+                          {isCurrentActive && (() => {
+                            const rem = calculateCycleTimeRemaining(now, c);
+                            const remText = rem.isExpired
+                              ? 'Ended • Next Auto-Added'
+                              : rem.days > 0
+                              ? `${rem.days}d ${rem.hours}h left`
+                              : `${rem.hours}h ${rem.minutes}m left`;
+                            return (
+                              <span className="text-[10px] font-extrabold bg-emerald-600 text-white px-2 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-200 animate-ping" />
+                                <span>Active Timer ({remText})</span>
+                              </span>
+                            );
+                          })()}
                           {isFiltered && !isCurrentActive && (
                             <span className="text-[10px] font-semibold bg-indigo-100 text-indigo-800 px-2 py-0.2 rounded-full">
                               Currently Filtered

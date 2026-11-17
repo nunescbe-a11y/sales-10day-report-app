@@ -14,13 +14,14 @@ import {
   Tag,
   Building2,
   Save,
-  Edit3
+  Edit3,
+  Clock
 } from 'lucide-react';
 import { useSales } from '../context/SalesContext';
 import type { SaleItem, RegionType, StatusCategory } from '../types';
 import { SalesTable } from './SalesTable';
 import { StatusSelector } from './StatusSelector';
-import { LiveCycleBanner } from './LiveCycleClock';
+import { LiveCycleBanner, useLiveClock, calculateCycleTimeRemaining } from './LiveCycleClock';
 
 interface SalesRepViewProps {
   onEditItem: (item: SaleItem) => void;
@@ -155,6 +156,25 @@ export const SalesRepView: React.FC<SalesRepViewProps> = ({
     if (selectedCycleId === 'all') return cycles[cycles.length - 1];
     return cycles.find((c) => c.id === selectedCycleId) || cycles[0];
   }, [cycles, selectedCycleId]);
+
+  const now = useLiveClock();
+  const currentActiveCycle = useMemo(() => {
+    return cycles.find((c) => c.isCurrent) || activeCycle;
+  }, [cycles, activeCycle]);
+
+  const cycleCountdown = useMemo(() => {
+    if (!currentActiveCycle) return null;
+    return calculateCycleTimeRemaining(now, currentActiveCycle);
+  }, [now, currentActiveCycle]);
+
+  const cycleCountdownText = useMemo(() => {
+    if (!cycleCountdown) return null;
+    if (cycleCountdown.isExpired) return 'Cycle ended - Next auto-added';
+    if (cycleCountdown.days > 0) {
+      return `${cycleCountdown.days}d ${cycleCountdown.hours}h left`;
+    }
+    return `${cycleCountdown.hours}h ${cycleCountdown.minutes}m left`;
+  }, [cycleCountdown]);
 
   const repTotals = useMemo(() => {
     const totalSales = repSales.reduce((acc, s) => acc + (s.overallAmount || 0), 0);
@@ -504,15 +524,28 @@ export const SalesRepView: React.FC<SalesRepViewProps> = ({
             </option>
           </select>
           {onOpenCycleManager && (
-            <button
-              type="button"
-              onClick={onOpenCycleManager}
-              title="View & Add 10-Day Cycle Timing Periods"
-              className="ml-1.5 pl-1.5 border-l border-slate-300 dark:border-zinc-700 text-[10px] font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 flex items-center gap-0.5 cursor-pointer"
-            >
-              <Plus className="w-2.5 h-2.5" />
-              <span>Timing</span>
-            </button>
+            <div className="flex items-center ml-1.5 pl-1.5 border-l border-slate-300 dark:border-zinc-700 gap-1.5">
+              {cycleCountdownText && (
+                <button
+                  type="button"
+                  onClick={onOpenCycleManager}
+                  title={`Current 10-day period deadline countdown (${cycleCountdownText}). Click to open Cycle Timing Manager.`}
+                  className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60 flex items-center gap-1 shadow-2xs transition cursor-pointer"
+                >
+                  <Clock className="w-2.5 h-2.5 text-amber-600 dark:text-amber-400 animate-pulse" />
+                  <span>{cycleCountdownText}</span>
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={onOpenCycleManager}
+                title="View & Add 10-Day Cycle Timing Periods"
+                className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 flex items-center gap-0.5 cursor-pointer hover:underline"
+              >
+                <Plus className="w-2.5 h-2.5" />
+                <span>Timing</span>
+              </button>
+            </div>
           )}
         </div>
       </div>

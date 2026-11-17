@@ -108,10 +108,11 @@ export function generateNextCycle(currentCycle: ReportingCycle, isCurrent = fals
 
 /**
  * Automatically audits the cycle registry against today's date:
- * 1. Closes any expired cycles (isCurrent = false)
- * 2. Finds or auto-creates the cycle corresponding to today's date (isCurrent = true)
- * 3. Also auto-creates the upcoming next cycle so staff can plan ahead
- * 4. Returns the updated list and current active cycle
+ * 1. Detects cycle closure: when previous cycle ends/expires, it closes and isCurrent = false
+ * 2. Automatically creates and activates the next current cycle for today's date (isCurrent = true)
+ * 3. Also automatically creates upcoming subsequent cycles so staff and admin can plan ahead
+ * 4. Normalizes cycle display titles so that only the truly active cycle has the ' - Active' badge
+ * 5. Returns updatedCycles, activeCycle, hasChanged, and rolledOverFrom ID
  */
 export function autoSyncReportingCycles(
   existingCycles: ReportingCycle[],
@@ -120,9 +121,17 @@ export function autoSyncReportingCycles(
   updatedCycles: ReportingCycle[];
   activeCycle: ReportingCycle;
   hasChanged: boolean;
+  rolledOverFrom?: string;
 } {
   const todayCycle = generateCycleForDate(now, true);
   const nextCycle = generateNextCycle(todayCycle, false);
+  const subsequentCycle = generateNextCycle(nextCycle, false);
+
+  const prevActive = existingCycles.find((c) => c.isCurrent);
+  let rolledOverFrom: string | undefined = undefined;
+  if (prevActive && prevActive.id !== todayCycle.id) {
+    rolledOverFrom = prevActive.id;
+  }
 
   let hasChanged = false;
   const cycleMap = new Map<string, ReportingCycle>();
@@ -144,12 +153,31 @@ export function autoSyncReportingCycles(
     hasChanged = true;
   }
 
-  // Update isCurrent status for all cycles
+  // Ensure subsequent cycle exists
+  if (!cycleMap.has(subsequentCycle.id)) {
+    cycleMap.set(subsequentCycle.id, subsequentCycle);
+    hasChanged = true;
+  }
+
+  // Update isCurrent status and clean up names
   for (const [id, c] of cycleMap.entries()) {
     const isTodayMatch = id === todayCycle.id;
     if (c.isCurrent !== isTodayMatch) {
       c.isCurrent = isTodayMatch;
       hasChanged = true;
+    }
+
+    // Synchronize title badge with active status
+    if (c.isCurrent) {
+      if (!c.name.includes('- Active')) {
+        c.name = c.name.endsWith(')') ? c.name.replace(/\)$/, ' - Active)') : `${c.name} - Active`;
+        hasChanged = true;
+      }
+    } else {
+      if (c.name.includes('- Active')) {
+        c.name = c.name.replace(/\s*-\s*Active/g, '');
+        hasChanged = true;
+      }
     }
   }
 
@@ -164,6 +192,7 @@ export function autoSyncReportingCycles(
     updatedCycles,
     activeCycle,
     hasChanged,
+    rolledOverFrom,
   };
 }
 

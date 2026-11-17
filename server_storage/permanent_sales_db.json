@@ -254,7 +254,7 @@
       "cycleNumber": 2,
       "startDate": "2026-11-11",
       "endDate": "2026-11-20",
-      "isCurrent": false
+      "isCurrent": true
     },
     {
       "id": "2026-11-C3",
@@ -298,7 +298,7 @@
       "cycleNumber": 1,
       "startDate": "2027-01-01",
       "endDate": "2027-01-10",
-      "isCurrent": true,
+      "isCurrent": false,
       "id": "2027-01-C1"
     }
   ],

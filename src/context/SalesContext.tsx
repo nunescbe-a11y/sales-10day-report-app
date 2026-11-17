@@ -326,11 +326,10 @@ export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     const syncCyclesWithDate = () => {
       setCycles((prevCycles) => {
-        const { updatedCycles, activeCycle, hasChanged } = autoSyncReportingCycles(prevCycles, new Date());
+        const { updatedCycles, activeCycle, hasChanged, rolledOverFrom } = autoSyncReportingCycles(prevCycles, new Date());
         if (hasChanged) {
           setSelectedCycleIdState((curSelected) => {
-            const wasOldActive = prevCycles.some((c) => c.id === curSelected && !c.isCurrent);
-            if (wasOldActive || !curSelected) {
+            if (curSelected === rolledOverFrom || curSelected === activeCycle.id || !curSelected) {
               return activeCycle.id;
             }
             return curSelected;
@@ -343,7 +342,7 @@ export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
 
     syncCyclesWithDate();
-    const interval = setInterval(syncCyclesWithDate, 15000);
+    const interval = setInterval(syncCyclesWithDate, 2000);
     return () => clearInterval(interval);
   }, []);
 
@@ -458,7 +457,7 @@ export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // 2. Continuous Auto-Sync to Permanent Disk Storage (Only when actual changes occur)
   useEffect(() => {
-    if (!sales || sales.length === 0) return;
+    if (!sales) return;
     const currentDigest = JSON.stringify({ sales, cycles, reps, statusOptions });
     if (currentDigest === lastSyncedDigestRef.current) return;
 
@@ -814,24 +813,34 @@ export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const id = cycleData.month && cycleData.cycleNumber 
       ? `${cycleData.month}-C${cycleData.cycleNumber}` 
       : `cycle-${Date.now()}`;
-    
-    const exists = cycles.some((c) => c.id === id);
-    const finalId = exists ? `cycle-${Date.now()}` : id;
 
     const newCycle: ReportingCycle = {
       ...cycleData,
-      id: finalId,
+      id,
     };
 
     setCycles((prev) => {
+      const filtered = prev.filter((c) => c.id !== id);
       if (newCycle.isCurrent) {
-        return [...prev.map((c) => ({ ...c, isCurrent: false })), newCycle];
+        return [
+          ...filtered.map((c) => ({
+            ...c,
+            isCurrent: false,
+            name: c.name.replace(/\s*-\s*Active/g, ''),
+          })),
+          {
+            ...newCycle,
+            name: newCycle.name.includes('- Active')
+              ? newCycle.name
+              : (newCycle.name.endsWith(')') ? newCycle.name.replace(/\)$/, ' - Active)') : `${newCycle.name} - Active`),
+          },
+        ].sort((a, b) => a.startDate.localeCompare(b.startDate));
       }
-      return [...prev, newCycle];
+      return [...filtered, newCycle].sort((a, b) => a.startDate.localeCompare(b.startDate));
     });
 
     if (newCycle.isCurrent) {
-      setSelectedCycleIdState(finalId);
+      setSelectedCycleIdState(id);
     }
   };
 
@@ -840,6 +849,9 @@ export const SalesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       prev.map((c) => ({
         ...c,
         isCurrent: c.id === cycleId,
+        name: c.id === cycleId
+          ? (c.name.includes('- Active') ? c.name : (c.name.endsWith(')') ? c.name.replace(/\)$/, ' - Active)') : `${c.name} - Active`))
+          : c.name.replace(/\s*-\s*Active/g, ''),
       }))
     );
     setSelectedCycleIdState(cycleId);
